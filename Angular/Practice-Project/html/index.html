@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Angular Demo</title>
+    <link rel="stylesheet" href="../css/style.css">
+
+    <script src="../angular/angular.min.js"></script>
+    <script src="../angular/angular-route.min.js"></script>
+    <script src="../angular/angular-animate.min.js"></script>
+    <script src="../js/myApp/myApp.js"></script>
+    <script src="../js/myApp/route-config.js"></script>
+    <script src="../js/myApp/artists/artist.js"></script>
+    <script src="../js/myApp/details/detail.js"></script>
+
+
+
+</head>
+<body>
+<!--   <input type=text" ng-model="name">   ng-model is the directive, and ties the input field to var 'name'-->
+<!--   <h2>Welcome {{name}}</h2>          'name', is then used in the template, and updated immediately because of the "two-way" data binding -->
+
+    <div class="main" ng-app="myApp">
+        <div ng-view></div>
+    </div>
+</body>
+</html>
+<!-- ng-model binds any input, or text area into the property of the scope -->
+<!-- {{ }} is called an expression, and gets values of variables-->
