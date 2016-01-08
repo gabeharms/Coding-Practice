@@ -5,12 +5,12 @@ var CommentBox = React.createClass({
     return (
       <div className="commentBox">
         <h1>Comments</h1>
-        <CommentList />   // The JSX compiler will automatically rewrite HTML tags 
-        <CommentForm />   // to React.createElement(tagName) expressions and leave everything else alone.
-      </div>              // This is to prevent the pollution of the global namespace.
-    );
-  }
-});
+        <CommentList />   
+        <CommentForm />   
+      </div>              
+    ); // The JSX compiler will automatically rewrite HTML tags 
+  }    // to React.createElement(tagName) expressions and leave everything else alone.
+});    // This is to prevent the pollution of the global namespace.
 
 // Comment list Class
 var CommentList = React.createClass({
@@ -40,14 +40,14 @@ var Comment = React.createClass({
   render: function() {
     return (
       <div className="comment">
-        <h2 className="commentAuthor"> // Data passed in from a parent component is available as a 'property' on 
-          {this.props.author}          // the child component. These 'properties' are accessed through this.props.
-        </h2>                          // Using props, we will be able to read the data passed to the Comment from the CommentList
+        <h2 className="commentAuthor"> 
+          {this.props.author}          
+        </h2>                          
         {this.props.children}
       </div>
-    );
-  }
-});
+    );     // Data passed in from a parent component is available as a 'property' on 
+  }        // the child component. These 'properties' are accessed through this.props.
+});        // Using props, we will be able to read the data passed to the Comment from the CommentList
 
 
 // Instantiates the root component, starts the framework, 
