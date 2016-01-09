@@ -21,12 +21,18 @@ var CommentBox = React.createClass({
     this.loadCommentsFromServer();  // component is rendered for the first time.
     setInterval(this.loadCommentsFromServer, this.props.pollInterval);
   },
+  handleCommentSubmit: function(comment) {    // We need to pass data from the child 
+                                              // component back up to its parent. We do 
+                                              // this in our parent's render method by passing 
+  },                                          // a new callback (handleCommentSubmit) into 
+                                              // the child, binding it to the child's onCommentSubmit event.
+
   render: function() { // Only function in the 'CommentBox' class
     return (
       <div className="commentBox">
         <h1>Comments</h1>
         <CommentList data={this.state.data} />
-        <CommentForm />   
+        <CommentForm onCommentSubmit={this.handleCommentSubmit} />
       </div>              
     ); // The JSX compiler will automatically rewrite HTML tags 
   }    // to React.createElement(tagName) expressions and leave everything else alone.
@@ -68,7 +74,7 @@ var CommentForm = React.createClass({
     if (!text || !author) {
       return;
     }
-    // TODO: send request to the server
+    this.props.onCommentSubmit({author: author, text: text});  // Callback of the parent element
     this.setState({author: '', text: ''});
   },
   render: function() {
