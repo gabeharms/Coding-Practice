@@ -22,11 +22,19 @@ var CommentBox = React.createClass({
     setInterval(this.loadCommentsFromServer, this.props.pollInterval);
   },
   handleCommentSubmit: function(comment) {    // We need to pass data from the child 
-                                              // component back up to its parent. We do 
-                                              // this in our parent's render method by passing 
-  },                                          // a new callback (handleCommentSubmit) into 
-                                              // the child, binding it to the child's onCommentSubmit event.
-
+    $.ajax({                                  // component back up to its parent. We do 
+      url: this.props.url,                    // this in our parent's render method by passing 
+      dataType: 'json',                       // a new callback (handleCommentSubmit) into 
+      type: 'POST',                           // the child, binding it to the child's onCommentSubmit event.
+      data: comment,
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });                                                                             
+  },                                                                                     
   render: function() { // Only function in the 'CommentBox' class
     return (
       <div className="commentBox">
