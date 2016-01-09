@@ -52,14 +52,48 @@ var CommentList = React.createClass({
 
 // Comment Form Class
 var CommentForm = React.createClass({
+  getInitialState: function() {
+    return {author: '', text: ''};
+  },
+  handleAuthorChange: function(e) {
+    this.setState({author: e.target.value});
+  },
+  handleTextChange: function(e) {
+    this.setState({text: e.target.value});
+  },
+  handleSubmit: function(e) {
+    e.preventDefault();
+    var author = this.state.author.trim();
+    var text = this.state.text.trim();
+    if (!text || !author) {
+      return;
+    }
+    // TODO: send request to the server
+    this.setState({author: '', text: ''});
+  },
   render: function() {
     return (
-      <div className="commentForm">
-        Hello, world! I am a CommentForm.
-      </div>
+      <form className="commentForm" onSubmit={this.handleSubmit}>
+        <input
+          type="text"
+          placeholder="Your name"
+          value={this.state.author}
+          onChange={this.handleAuthorChange}
+        />
+        <input
+          type="text"
+          placeholder="Say something..."
+          value={this.state.text}
+          onChange={this.handleTextChange}
+        />
+        <input type="submit" value="Post" />
+      </form>
     );
-  }
-});
+  }    // as the user enters text into the <input> fields, the attached 
+});    // onChange callbacks are fired and the state of the component is modified. 
+       // Subsequently, the rendered value of the input element will be updated to 
+       // reflect the current component state.
+
 
 // Comment Class
 var Comment = React.createClass({
@@ -83,6 +117,6 @@ var Comment = React.createClass({
 // this tutorial. ReactDOM.render should only be called after the composite components
 // have been defined.
 ReactDOM.render(
-  <CommentBox url="/api/comments" />,
+  <CommentBox url="/api/comments" pollInterval={2000} />,
   document.getElementById('content')
 );
