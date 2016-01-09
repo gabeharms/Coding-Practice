@@ -1,16 +1,27 @@
-var data = [
-  {id: 1, author: "Pete Hunt", text: "This is one comment"},
-  {id: 2, author: "Jordan Walke", text: "This is *another* comment"}
-];
-
 
 // Comment Box class
 var CommentBox = React.createClass({
+  getInitialState: function() {
+    return {data: []};
+  },
+  componentDidMount: function() {
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      cache: false,
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
   render: function() { // Only function in the 'CommentBox' class
     return (
       <div className="commentBox">
         <h1>Comments</h1>
-        <CommentList data={this.props.data} />
+        <CommentList data={this.state.data} />
         <CommentForm />   
       </div>              
     ); // The JSX compiler will automatically rewrite HTML tags 
@@ -68,6 +79,6 @@ var Comment = React.createClass({
 // this tutorial. ReactDOM.render should only be called after the composite components
 // have been defined.
 ReactDOM.render(
-  <CommentBox data={data} />,
+  <CommentBox url="/api/comments" />,
   document.getElementById('content')
 );
