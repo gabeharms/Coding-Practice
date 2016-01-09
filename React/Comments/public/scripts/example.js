@@ -1,11 +1,11 @@
 
 // Comment Box class
 var CommentBox = React.createClass({
-  getInitialState: function() {
-    return {data: []};
+  getInitialState: function() {    // executes exactly once during the lifecycle of 
+    return {data: []};             // the component and sets up the initial state of the component.
   },
-  componentDidMount: function() {
-    $.ajax({
+  loadCommentsFromServer: function() {  
+    $.ajax({                       
       url: this.props.url,
       dataType: 'json',
       cache: false,
@@ -16,6 +16,10 @@ var CommentBox = React.createClass({
         console.error(this.props.url, status, err.toString());
       }.bind(this)
     });
+  },
+  componentDidMount: function() {   // method called automatically by React after a 
+    this.loadCommentsFromServer();  // component is rendered for the first time.
+    setInterval(this.loadCommentsFromServer, this.props.pollInterval);
   },
   render: function() { // Only function in the 'CommentBox' class
     return (
