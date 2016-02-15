@@ -1,0 +1,12 @@
+{
+  "name": "Fast Table Server",
+  "description": "A front-end implementation of a tables calculations",
+  "keywords": [],
+  "repository": "",
+  "logo": "",
+  "website": "",
+  "success_url": "/",
+  "env" : {
+    "BUILDPACK_URL": "https://github.com/heroku/heroku-buildpack-nodejs.git"
+  }
+}
