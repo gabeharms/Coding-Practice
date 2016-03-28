@@ -347,7 +347,7 @@ var TextBoxCell = function (_Cell2) {
 }(Cell);
 
 var render = function render() {
-  ReactDOM.render(React.createElement(PayAppTable, { value: store.getState() }), document.getElementById('content'));
+  ReactDOM.render(React.createElement(PayAppTable, { palis: store.getState() }), document.getElementById('content'));
 };
 
 loadPalisFromServer('api/pay-app');

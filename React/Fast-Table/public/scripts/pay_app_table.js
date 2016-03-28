@@ -158,7 +158,7 @@ class TextBoxCell extends Cell {
 }
 
 const render = () => {
-  ReactDOM.render(<PayAppTable value={store.getState()} />,
+  ReactDOM.render(<PayAppTable palis={store.getState()} />,
                   document.getElementById('content'));
 }
 

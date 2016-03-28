@@ -1,12 +1,13 @@
 import { createAction, handleActions } from 'redux-actions';
 import { Map } from 'immutable';
+import { updateCalculatedLineItemColumns } from '../helpers/paliEditTable';
 
-const UPDATE_WORK_COMPLETED_THIS_PERIOD                       = 'UPDATE_WORK_COMPLETED_THIS_PERIOD';
-const UPDATE_MATERIALS_PRESENTLY_STORED                       = 'UPDATE_MATERIALS_PRESENTLY_STORED';
-const UPDATE_PERCENT_WORK_RETAINAGE_RETAINED_THIS_PERIOD      = 'UPDATE_PERCENT_WORK_RETAINAGE_RETAINED_THIS_PERIOD';
+const UPDATE_WORK_COMPLETED_THIS_PERIOD = 'UPDATE_WORK_COMPLETED_THIS_PERIOD';
+const UPDATE_MATERIALS_PRESENTLY_STORED = 'UPDATE_MATERIALS_PRESENTLY_STORED';
+const UPDATE_PERCENT_WORK_RETAINAGE_RETAINED_THIS_PERIOD = 'UPDATE_PERCENT_WORK_RETAINAGE_RETAINED_THIS_PERIOD';
 const UPDATE_PERCENT_MATERIALS_RETAINAGE_RETAINED_THIS_PERIOD = 'UPDATE_PERCENT_MATERIALS_RETAINAGE_RETAINED_THIS_PERIOD';
-const UPDATE_WORK_RETAINAGE_RELEASED_THIS_PERIOD              = 'UPDATE_WORK_RETAINAGE_RELEASED_THIS_PERIOD';
-const UPDATE_MATERIALS_RETAINAGE_RELEASED_THIS_PERIOD         = 'UPDATE_MATERIALS_RETAINAGE_RELEASED_THIS_PERIOD';
+const UPDATE_WORK_RETAINAGE_RELEASED_THIS_PERIOD = 'UPDATE_WORK_RETAINAGE_RELEASED_THIS_PERIOD';
+const UPDATE_MATERIALS_RETAINAGE_RELEASED_THIS_PERIOD = 'UPDATE_MATERIALS_RETAINAGE_RELEASED_THIS_PERIOD';
 
 const updateWorkCompletedThisPeriod = createAction(
   UPDATE_WORK_COMPLETED_THIS_PERIOD,
@@ -33,19 +34,39 @@ const updateMaterialsRetainageReleasedThisPeriod = createAction(
   (id, value) => ({id, value}));
 
 
-const reducer = handleActions( 
+
+const reducer = handleActions(
   {
     [UPDATE_WORK_COMPLETED_THIS_PERIOD]: (state, action) => {
       const { payload: { id, value } } = action;
-      return state.setIn([key, 'search'], query);
+      const newState = state.setIn([id, 'work_completed_this_period'], value);
+      return state.set(id, updateCalculatedLineItemColumns(newState.get(id)));
     },
-    case 'UpdateWorkCompletedThisPeriod':                     return updateWorkCompletedThisPeriod(state, action.id, action.value);
-    case 'UpdateMaterialsPresentlyStored':                    return updateMaterialsPresentlyStored(state, action.id, action.value);
-    case 'UpdatePercentWorkRetainageRetainedThisPeriod':      return updatePercentWorkRetainageRetainedThisPeriod(state, action.id, action.value);
-    case 'UpdatePercentMaterialsRetainageRetainedThisPeriod': return updatePercentMaterialsRetainageRetainedThisPeriod(state, action.id, action.value);
-    case 'UpdateWorkRetainageReleasedThisPeriod':             return updateWorkRetainageReleasedThisPeriod(state, action.id, action.value);
-    case 'UpdateMaterialsRetainageReleasedThisPeriod':        return updateMaterialsRetainageReleasedThisPeriod(state, action.id, action.value);
-
+    [UPDATE_MATERIALS_PRESENTLY_STORED]: (state, action) => {
+      const { payload: { id, value } } = action;
+      const newState = state.setIn([id, 'materials_presently_stored'], value);
+      return state.set(id, updateCalculatedLineItemColumns(newState.get(id)));
+    },
+    [UPDATE_PERCENT_WORK_RETAINAGE_RETAINED_THIS_PERIOD]: (state, action) => {
+      const { payload: { id, value } } = action;
+      const newState = state.setIn([id, 'percent_work_retainage_retained_this_period'], value);
+      return state.set(id, updateCalculatedLineItemColumns(newState.get(id)));
+    },
+    [UPDATE_PERCENT_MATERIALS_RETAINAGE_RETAINED_THIS_PERIOD]: (state, action) => {
+      const { payload: { id, value } } = action;
+      const newState = state.setIn([id, 'percent_materials_retainage_retained_this_period'], value);
+      return state.set(id, updateCalculatedLineItemColumns(newState.get(id)));
+    },
+    [UPDATE_WORK_RETAINAGE_RELEASED_THIS_PERIOD]: (state, action) => {
+      const { payload: { id, value } } = action;
+      const newState = state.setIn([id, 'work_retainage_released_this_period'], value);
+      return state.set(id, updateCalculatedLineItemColumns(newState.get(id)));
+    },
+    [UPDATE_MATERIALS_RETAINAGE_RELEASED_THIS_PERIOD]: (state, action) => {
+      const { payload: { id, value } } = action;
+      const newState = state.setIn([id, 'materials_retainage_released_this_period'], value);
+      return state.set(id, updateCalculatedLineItemColumns(newState.get(id)));
+    },
   },
   Map();
 );
@@ -60,8 +81,11 @@ const store = createStore(payApp);
 
 
 export {
-  setOpen,
-  setSearchQuery,
-  setValue,
+  updateWorkCompletedThisPeriod,
+  updateMaterialsPresentlyStored,
+  updatePercentWorkRetainageRetainedThisPeriod,
+  updatePercentMaterialsRetainageRetainedThisPeriod,
+  updateWorkRetainageReleasedThisPeriod,
+  updateMaterialsRetainageReleasedThisPeriod,
   reducer as default,
 };
