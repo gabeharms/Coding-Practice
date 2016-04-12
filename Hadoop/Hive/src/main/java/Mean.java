@@ -1,8 +1,14 @@
-package com.hadoopbook.hive;
-
 import org.apache.hadoop.hive.ql.exec.UDAF;
 import org.apache.hadoop.hive.ql.exec.UDAFEvaluator;
 import org.apache.hadoop.hive.serde2.io.DoubleWritable;
+
+/********************************/
+/* Class that uses the UDAFEvaluator interface,
+/* This allows the class to be used with hive,
+/* where iterate will be called for each row,
+/* in the hive result. This class is designed to
+/* find the mean temperature among all rows.
+/*********************************/
 
 public class Mean extends UDAF {
 
@@ -11,7 +17,7 @@ public class Mean extends UDAF {
       double sum;
       long count;
     }
-    
+
     private PartialResult partial;
 
     public void init() {

@@ -15,13 +15,15 @@ import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-/**
- * Uses {@link HTable} to load temperature data into a HBase table directly. Less
- * efficient than {@link HBaseTemperatureImporter} (since auto-flush is enabled) and
- * {@link HBaseTemperatureBulkImporter} in particular.
- */
+
+/********************************/
+/* Uses HTable to load temperature data into a HBase table directly. Less
+/* efficient than HBaseTemperatureImporter since auto-flush is enabled and
+/* is exteremely less efficient than HBaseTemperatureBulkImporter
+/*********************************/
+
 public class HBaseTemperatureDirectImporter extends Configured implements Tool {
-  
+
   static class HBaseTemperatureMapper<K, V> extends Mapper<LongWritable, Text, K, V> {
     private NcdcRecordParser parser = new NcdcRecordParser();
     private HTable table;
@@ -45,7 +47,8 @@ public class HBaseTemperatureDirectImporter extends Configured implements Tool {
         p.add(HBaseTemperatureQuery.DATA_COLUMNFAMILY,
             HBaseTemperatureQuery.AIRTEMP_QUALIFIER,
             Bytes.toBytes(parser.getAirTemperature()));
-        table.put(p);
+        table.put(p); // Put record into table. Not that were not even writting
+                      // our map results to output.
       }
     }
 

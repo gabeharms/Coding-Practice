@@ -12,10 +12,19 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
+/********************************/
+/* We put a lot of constants about the HBase
+/* 'station' table here. We also have a getStationObservations()
+/* method which actually runs an HBase query to pull
+/* record info from the table. Finally, running main()
+/* will setup the HBase 'observation' table and run a query
+/* based on the input station id.
+/*********************************/
+
 public class HBaseTemperatureQuery extends Configured implements Tool {
   static final byte[] DATA_COLUMNFAMILY = Bytes.toBytes("data");
   static final byte[] AIRTEMP_QUALIFIER = Bytes.toBytes("airtemp");
-  
+
   public NavigableMap<Long, Integer> getStationObservations(HTable table,
       String stationId, long maxStamp, int maxCount) throws IOException {
     byte[] startRow = RowKeyConverter.makeObservationRowKey(stationId, maxStamp);
@@ -45,7 +54,7 @@ public class HBaseTemperatureQuery extends Configured implements Tool {
       System.err.println("Usage: HBaseTemperatureQuery <station_id>");
       return -1;
     }
-    
+
     HTable table = new HTable(HBaseConfiguration.create(getConf()), "observations");
     try {
       NavigableMap<Long, Integer> observations =

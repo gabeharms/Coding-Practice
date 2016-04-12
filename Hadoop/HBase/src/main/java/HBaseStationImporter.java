@@ -10,14 +10,21 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
+
+/********************************/
+/* Here we take in the station meta data,
+/* use the parser to find its values, and
+/* put each station into HBase in their own row
+/*********************************/
+
 public class HBaseStationImporter extends Configured implements Tool {
-  
+
   public int run(String[] args) throws IOException {
     if (args.length != 1) {
       System.err.println("Usage: HBaseStationImporter <input>");
       return -1;
     }
-    
+
     HTable table = new HTable(HBaseConfiguration.create(getConf()), "stations");
     try {
       NcdcStationMetadata metadata = new NcdcStationMetadata();

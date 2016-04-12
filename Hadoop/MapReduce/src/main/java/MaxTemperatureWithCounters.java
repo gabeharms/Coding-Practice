@@ -10,23 +10,31 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-// vv MaxTemperatureWithCounters
+/********************************/
+/* This class is a different version of the MaxTemperatureDriver
+/* class. Here we are doing all the same things, except we are
+/* also using Hadoops counters to keep track of missing and malformed
+/* records. Note, that we are using a custom mapper defined here, but
+/* the same redcuer. This is because malformed records (raw NCDC lines of data),
+/* will only be received by the mapper. 
+/*********************************/
+
 public class MaxTemperatureWithCounters extends Configured implements Tool {
-  
+
   enum Temperature {
     MISSING,
     MALFORMED
   }
-  
+
   static class MaxTemperatureMapperWithCounters
     extends Mapper<LongWritable, Text, Text, IntWritable> {
-    
+
     private NcdcRecordParser parser = new NcdcRecordParser();
-  
+
     @Override
     protected void map(LongWritable key, Text value, Context context)
         throws IOException, InterruptedException {
-      
+
       parser.parse(value);
       if (parser.isValidTemperature()) {
         int airTemperature = parser.getAirTemperature();
@@ -38,19 +46,19 @@ public class MaxTemperatureWithCounters extends Configured implements Tool {
       } else if (parser.isMissingTemperature()) {
         context.getCounter(Temperature.MISSING).increment(1);
       }
-      
+
       // dynamic counter
       context.getCounter("TemperatureQuality", parser.getQuality()).increment(1);
     }
   }
-  
+
   @Override
   public int run(String[] args) throws Exception {
     Job job = JobBuilder.parseInputAndOutput(this, getConf(), args);
     if (job == null) {
       return -1;
     }
-    
+
     job.setOutputKeyClass(Text.class);
     job.setOutputValueClass(IntWritable.class);
 
@@ -60,7 +68,7 @@ public class MaxTemperatureWithCounters extends Configured implements Tool {
 
     return job.waitForCompletion(true) ? 0 : 1;
   }
-  
+
   public static void main(String[] args) throws Exception {
     int exitCode = ToolRunner.run(new MaxTemperatureWithCounters(), args);
     System.exit(exitCode);

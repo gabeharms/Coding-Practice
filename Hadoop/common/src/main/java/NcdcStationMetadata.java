@@ -2,8 +2,17 @@ import java.io.*;
 import java.util.*;
 import org.apache.hadoop.io.IOUtils;
 
+/********************************/
+/* Class responsible for reading in an NCDC meta data
+/* file, and building a map whose key is the station ID,
+/* and value is the station's name. It builds this using
+/* the meta data parser class to pull information from each
+/* line.
+/*********************************/
+
+
 public class NcdcStationMetadata {
-  
+
   private Map<String, String> stationIdToName = new HashMap<String, String>();
 
   public void initialize(File file) throws IOException {
@@ -29,9 +38,9 @@ public class NcdcStationMetadata {
     }
     return stationName;
   }
-  
+
   public Map<String, String> getStationIdToNameMap() {
     return Collections.unmodifiableMap(stationIdToName);
   }
-  
+
 }

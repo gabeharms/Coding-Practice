@@ -3,13 +3,21 @@ import java.util.Date;
 
 import org.apache.hadoop.io.Text;
 
+/********************************/
+/* A utility class whose primary purpose is to
+/* take in one line of NCDC station data, and break it
+/* down into all of its components. This is done in
+/* that parse method, which will set all of its
+/* instance members to values found from the parsed record
+/*********************************/
+
 public class NcdcRecordParser {
-  
-  private static final int MISSING_TEMPERATURE = 9999;
-  
+
+  private static final int MISSING_TEMPERATURE = 9999; // Value when a station doesn't have a valid temperature
+
   private static final DateFormat DATE_FORMAT =
-    new SimpleDateFormat("yyyyMMddHHmm");
-  
+    new SimpleDateFormat("yyyyMMddHHmm"); // Format expected from the station data
+
   private String stationId;
   private String observationDateString;
   private String year;
@@ -17,7 +25,7 @@ public class NcdcRecordParser {
   private int airTemperature;
   private boolean airTemperatureMalformed;
   private String quality;
-  
+
   public void parse(String record) {
     stationId = record.substring(4, 10) + "-" + record.substring(10, 15);
     observationDateString = record.substring(15, 27);
@@ -36,28 +44,28 @@ public class NcdcRecordParser {
     airTemperature = Integer.parseInt(airTemperatureString);
     quality = record.substring(92, 93);
   }
-  
+
   public void parse(Text record) {
     parse(record.toString());
   }
-  
+
   public boolean isValidTemperature() {
     return !airTemperatureMalformed && airTemperature != MISSING_TEMPERATURE
         && quality.matches("[01459]");
   }
-  
+
   public boolean isMalformedTemperature() {
     return airTemperatureMalformed;
   }
-  
+
   public boolean isMissingTemperature() {
     return airTemperature == MISSING_TEMPERATURE;
   }
-  
+
   public String getStationId() {
     return stationId;
   }
-  
+
   public Date getObservationDate() {
     try {
       System.out.println(observationDateString);
@@ -78,7 +86,7 @@ public class NcdcRecordParser {
   public int getAirTemperature() {
     return airTemperature;
   }
-  
+
   public String getAirTemperatureString() {
     return airTemperatureString;
   }

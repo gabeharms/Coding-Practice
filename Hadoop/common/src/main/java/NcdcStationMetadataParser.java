@@ -1,7 +1,14 @@
 import org.apache.hadoop.io.Text;
 
+/********************************/
+/* Another utility class whose primary purpose is to
+/* take in one line of station meta data, and find the
+/* station id and name components in the line of text.
+/*********************************/
+
+
 public class NcdcStationMetadataParser {
-  
+
   private String stationId;
   private String stationName;
 
@@ -20,11 +27,11 @@ public class NcdcStationMetadataParser {
       return false;
     }
   }
-  
+
   public boolean parse(Text record) {
     return parse(record.toString());
   }
-  
+
   public String getStationId() {
     return stationId;
   }
@@ -32,5 +39,5 @@ public class NcdcStationMetadataParser {
   public String getStationName() {
     return stationName;
   }
-  
+
 }

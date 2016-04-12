@@ -13,6 +13,14 @@ import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
 
+/********************************/
+/* This class was built to get a feel for what
+/* the HBase Java API looks like, and had it can
+/* be used to interact with HBase. When it runs,
+/* it will create an HBase table, insert 3 records,
+/* then delete the table
+/*********************************/
+
 public class ExampleClient {
 
   public static void main(String[] args) throws IOException {

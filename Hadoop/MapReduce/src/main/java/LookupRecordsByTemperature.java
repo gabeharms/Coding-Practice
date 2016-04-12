@@ -7,6 +7,15 @@ import org.apache.hadoop.mapreduce.lib.output.MapFileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.partition.HashPartitioner;
 import org.apache.hadoop.util.*;
 
+
+/********************************/
+/* Builds and runs a job that looks up NCDC records
+/* based on the input temperature. This is achieved by
+/* using HashPartitioner to map the input records. It then
+/* reads from the partitioner based on the key input to the
+/* program
+/*********************************/
+
 public class LookupRecordsByTemperature extends Configured implements Tool {
 
   @Override
@@ -17,12 +26,12 @@ public class LookupRecordsByTemperature extends Configured implements Tool {
     }
     Path path = new Path(args[0]);
     IntWritable key = new IntWritable(Integer.parseInt(args[1]));
-    
+
     Reader[] readers = MapFileOutputFormat.getReaders(path, getConf());
     Partitioner<IntWritable, Text> partitioner =
       new HashPartitioner<IntWritable, Text>();
     Text val = new Text();
-    
+
     Reader reader = readers[partitioner.getPartition(key, val, readers.length)];
     Writable entry = reader.get(key, val);
     if (entry == null) {
@@ -37,7 +46,7 @@ public class LookupRecordsByTemperature extends Configured implements Tool {
     } while(reader.next(nextKey, val) && key.equals(nextKey));
     return 0;
   }
-  
+
   public static void main(String[] args) throws Exception {
     int exitCode = ToolRunner.run(new LookupRecordsByTemperature(), args);
     System.exit(exitCode);

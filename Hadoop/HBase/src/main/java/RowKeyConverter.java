@@ -4,9 +4,11 @@ public class RowKeyConverter {
 
   private static final int STATION_ID_LENGTH = 12;
 
-  /**
-   * @return A row key whose format is: <station_id> <reverse_order_timestamp>
-   */
+
+  /********************************/
+  /* @return A row key whose format is: <station_id> <reverse_order_timestamp>
+  /*********************************/
+
   public static byte[] makeObservationRowKey(String stationId,
       long observationTime) {
     byte[] row = new byte[STATION_ID_LENGTH + Bytes.SIZEOF_LONG];

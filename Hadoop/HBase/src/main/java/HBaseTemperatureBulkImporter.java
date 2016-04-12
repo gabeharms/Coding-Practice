@@ -19,12 +19,15 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-/**
- * Uses HBase's bulk load facility ({@link HFileOutputFormat2} and {@link
- * LoadIncrementalHFiles}) to efficiently load temperature data into a HBase table.
- */
+
+/********************************/
+/* Uses HBase's bulk load facility to efficiently
+/* load temperature data into a HBase table.
+
+/*********************************/
+
 public class HBaseTemperatureBulkImporter extends Configured implements Tool {
-  
+
   static class HBaseTemperatureMapper extends Mapper<LongWritable, Text,
       ImmutableBytesWritable, Put> {
     private NcdcRecordParser parser = new NcdcRecordParser();
@@ -62,12 +65,16 @@ public class HBaseTemperatureBulkImporter extends Configured implements Tool {
     job.setMapOutputValueClass(Put.class);
     HTable table = new HTable(conf, "observations");
     try {
+      // Here is where the map is performed, creating a map
+      // of Put object, one for each record, into tmpPath
       HFileOutputFormat2.configureIncrementalLoad(job, table);
 
       if (!job.waitForCompletion(true)) {
         return 1;
       }
 
+      // Now that the map is done, load the map jobs, output into
+      // HBase
       LoadIncrementalHFiles loader = new LoadIncrementalHFiles(conf);
       loader.doBulkLoad(tmpPath, table);
       FileSystem.get(conf).delete(tmpPath, true);

@@ -11,6 +11,16 @@ import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
+/********************************/
+/* HBase Table MapReduce job, that has only a mapper,
+/* The mapper receives a input for each row of the HBase
+/* table specified by the first input. Each time, the mapper,
+/* is called, it increments the ROWS counter. This program
+/* is unique because it uses HBase's TableMapper, and TableMapReduceUtil,
+/* classes to allow the mapper to receive a row directly from the
+/* HBase table. Cool or what!
+/*********************************/
+
 public class SimpleRowCounter extends Configured implements Tool {
 
   static class RowCounterMapper extends TableMapper<ImmutableBytesWritable, Result> {

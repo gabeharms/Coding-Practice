@@ -7,8 +7,13 @@ import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFunction;
 import scala.Tuple2;
 
+/********************************/
+/* A job for finding the max temperature from the
+/* NCDC station data, using the Spark API.
+/********************************/
+
 public class MaxTemperatureSpark {
-  
+
   public static void main(String[] args) throws Exception {
     if (args.length != 2) {
       System.err.println("Usage: MaxTemperatureSpark <input path> <output path>");
@@ -17,21 +22,21 @@ public class MaxTemperatureSpark {
 
     SparkConf conf = new SparkConf();
     JavaSparkContext sc = new JavaSparkContext("local", "MaxTemperatureSpark", conf);
-    JavaRDD<String> lines = sc.textFile(args[0]);
+    JavaRDD<String> lines = sc.textFile(args[0]); // Convert data to RDD
     JavaRDD<String[]> records = lines.map(new Function<String, String[]>() {
       @Override public String[] call(String s) {
-        return s.split("\t");
+        return s.split("\t"); // Split each record by the tab char
       }
     });
     JavaRDD<String[]> filtered = records.filter(new Function<String[], Boolean>() {
-      @Override public Boolean call(String[] rec) {
+      @Override public Boolean call(String[] rec) { // Filter out invalid records
         return rec[1] != "9999" && rec[2].matches("[01459]");
       }
     });
     JavaPairRDD<Integer, Integer> tuples = filtered.mapToPair(
       new PairFunction<String[], Integer, Integer>() {
         @Override public Tuple2<Integer, Integer> call(String[] rec) {
-          return new Tuple2<Integer, Integer>(
+          return new Tuple2<Integer, Integer>( // Map each record with year as key, and temp as value
               Integer.parseInt(rec[0]), Integer.parseInt(rec[1]));
         }
       }

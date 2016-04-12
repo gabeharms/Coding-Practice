@@ -1,10 +1,14 @@
-// cc JoinStationMapper Mapper for tagging station records for a reduce-side join
 import java.io.IOException;
 
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.Mapper;
 
-// vv JoinStationMapper
+
+/********************************/
+/* Mapper for tagging the station records that will then
+/* have a reduce-side join performed on them.
+/*********************************/
+
 public class JoinStationMapper
     extends Mapper<LongWritable, Text, TextPair, Text> {
   private NcdcStationMetadataParser parser = new NcdcStationMetadataParser();
@@ -18,4 +22,3 @@ public class JoinStationMapper
     }
   }
 }
-// ^^ JoinStationMapper

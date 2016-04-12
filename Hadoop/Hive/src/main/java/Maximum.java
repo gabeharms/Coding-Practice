@@ -1,5 +1,3 @@
-package com.hadoopbook.hive;
-
 import org.apache.hadoop.hive.ql.exec.UDAF;
 import org.apache.hadoop.hive.ql.exec.UDAFEvaluator;
 import org.apache.hadoop.io.IntWritable;
@@ -7,9 +5,9 @@ import org.apache.hadoop.io.IntWritable;
 public class Maximum extends UDAF {
 
   public static class MaximumIntUDAFEvaluator implements UDAFEvaluator {
-    
+
     private IntWritable result;
-    
+
     public void init() {
       System.err.printf("%s %s\n", hashCode(), "init");
       result = null;

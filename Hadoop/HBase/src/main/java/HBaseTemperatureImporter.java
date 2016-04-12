@@ -17,7 +17,7 @@ import org.apache.hadoop.util.ToolRunner;
  * Uses HBase's {@link TableOutputFormat} to load temperature data into a HBase table.
  */
 public class HBaseTemperatureImporter extends Configured implements Tool {
-  
+
   static class HBaseTemperatureMapper<K> extends Mapper<LongWritable, Text, K, Put> {
     private NcdcRecordParser parser = new NcdcRecordParser();
 
@@ -32,7 +32,9 @@ public class HBaseTemperatureImporter extends Configured implements Tool {
         p.add(HBaseTemperatureQuery.DATA_COLUMNFAMILY,
             HBaseTemperatureQuery.AIRTEMP_QUALIFIER,
             Bytes.toBytes(parser.getAirTemperature()));
-        context.write(null, p);
+        context.write(null, p); // Write map to output, but job has been configured
+                                // to just add this to the HBase table, rather than
+                                // actually write to output
       }
     }
   }
@@ -49,7 +51,7 @@ public class HBaseTemperatureImporter extends Configured implements Tool {
     job.getConfiguration().set(TableOutputFormat.OUTPUT_TABLE, "observations");
     job.setMapperClass(HBaseTemperatureMapper.class);
     job.setNumReduceTasks(0);
-    job.setOutputFormatClass(TableOutputFormat.class);
+    job.setOutputFormatClass(TableOutputFormat.class); // This is where the magic happens
     return job.waitForCompletion(true) ? 0 : 1;
   }
 

@@ -8,7 +8,11 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-//Identical to v3 except for v4 mapper
+/********************************/
+/* Builds and runs a job that finds the maximum temperature
+/* for a given year from NCDC station data. 
+/*********************************/
+
 public class MaxTemperatureDriver extends Configured implements Tool {
 
   @Override
@@ -19,23 +23,23 @@ public class MaxTemperatureDriver extends Configured implements Tool {
       ToolRunner.printGenericCommandUsage(System.err);
       return -1;
     }
-    
+
     Job job = new Job(getConf(), "Max temperature");
     job.setJarByClass(getClass());
 
     FileInputFormat.addInputPath(job, new Path(args[0]));
     FileOutputFormat.setOutputPath(job, new Path(args[1]));
-    
+
     job.setMapperClass(MaxTemperatureMapper.class);
     job.setCombinerClass(MaxTemperatureReducer.class);
     job.setReducerClass(MaxTemperatureReducer.class);
 
     job.setOutputKeyClass(Text.class);
     job.setOutputValueClass(IntWritable.class);
-    
+
     return job.waitForCompletion(true) ? 0 : 1;
   }
-  
+
   public static void main(String[] args) throws Exception {
     int exitCode = ToolRunner.run(new MaxTemperatureDriver(), args);
     System.exit(exitCode);

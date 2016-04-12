@@ -1,4 +1,3 @@
-// == JobBuilder
 import java.io.IOException;
 
 import org.apache.hadoop.conf.Configuration;
@@ -9,19 +8,27 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
 import org.apache.hadoop.util.Tool;
 
+/********************************/
+/* A decorator class that takes in a MapReduce driver
+/* class, and builds a mapreduce job from it. This reduces
+/* the need for all the logic to get your job setup.
+/* It also has a static method that will create a job just
+/* from input/output path args
+/*********************************/
+
 public class JobBuilder {
-  
+
   private final Class<?> driverClass;
   private final Job job;
   private final int extraArgCount;
   private final String extrArgsUsage;
-  
+
   private String[] extraArgs;
-  
+
   public JobBuilder(Class<?> driverClass) throws IOException {
     this(driverClass, 0, "");
   }
-  
+
   public JobBuilder(Class<?> driverClass, int extraArgCount, String extrArgsUsage) throws IOException {
     this.driverClass = driverClass;
     this.extraArgCount = extraArgCount;
@@ -30,10 +37,9 @@ public class JobBuilder {
     this.extrArgsUsage = extrArgsUsage;
   }
 
-  // vv JobBuilder
   public static Job parseInputAndOutput(Tool tool, Configuration conf,
       String[] args) throws IOException {
-    
+
     if (args.length != 2) {
       printUsage(tool, "<input> <output>");
       return null;
@@ -50,8 +56,7 @@ public class JobBuilder {
         tool.getClass().getSimpleName(), extraArgsUsage);
     GenericOptionsParser.printGenericCommandUsage(System.err);
   }
-  // ^^ JobBuilder
-  
+
   public JobBuilder withCommandLineArgs(String... args) throws IOException {
     Configuration conf = job.getConfiguration();
     GenericOptionsParser parser = new GenericOptionsParser(conf, args);
@@ -70,25 +75,25 @@ public class JobBuilder {
     }
     Path input = new Path(otherArgs[index++]);
     Path output = new Path(otherArgs[index++]);
-    
+
     if (index < otherArgs.length) {
       extraArgs = new String[otherArgs.length - index];
       System.arraycopy(otherArgs, index, extraArgs, 0, otherArgs.length - index);
     }
-    
+
     if (overwrite) {
       output.getFileSystem(conf).delete(output, true);
     }
-    
+
     FileInputFormat.addInputPath(job, input);
     FileOutputFormat.setOutputPath(job, output);
     return this;
   }
-  
+
   public Job build() {
     return job;
   }
-  
+
   public String[] getExtraArgs() {
     return extraArgs;
   }

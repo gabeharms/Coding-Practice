@@ -6,20 +6,27 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
-// vv MaxTemperatureMapperV4
+/********************************/
+/* Mapper for finding the maximum temperature for each
+/* year. The input parameter 'value' is a line of text from
+/* the NCDC station data. It uses a parser to find the year and
+/* temperature associated with that line of data, and writes the
+/* year as the key, and the temperature as the value.
+/*********************************/
+
 public class MaxTemperatureMapper
   extends Mapper<LongWritable, Text, Text, IntWritable> {
-  
+
   enum Temperature {
     MALFORMED
   }
 
   private NcdcRecordParser parser = new NcdcRecordParser();
-  
+
   @Override
   public void map(LongWritable key, Text value, Context context)
       throws IOException, InterruptedException {
-    
+
     parser.parse(value);
     if (parser.isValidTemperature()) {
       int airTemperature = parser.getAirTemperature();
@@ -30,4 +37,3 @@ public class MaxTemperatureMapper
     }
   }
 }
-// ^^ MaxTemperatureMapperV4

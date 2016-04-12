@@ -1,4 +1,3 @@
-// cc FileSystemCat Displays files from a Hadoop filesystem on standard output by using the FileSystem directly
 import java.io.InputStream;
 import java.net.URI;
 
@@ -7,7 +6,11 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
 
-// vv FileSystemCat
+/********************************/
+/* Displays files from a Hadoop filesystem on standard
+/* output by using the FileSystem directly
+/*********************************/
+
 public class FileSystemCat {
 
   public static void main(String[] args) throws Exception {
@@ -23,4 +26,3 @@ public class FileSystemCat {
     }
   }
 }
-// ^^ FileSystemCat

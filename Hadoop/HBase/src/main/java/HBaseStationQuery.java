@@ -11,6 +11,15 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
+/********************************/
+/* We put a lot of constants about the HBase
+/* 'station' table here. We also have a getStationInfo()
+/* method which actually runs an HBase query to pull
+/* station info from the table. Finally, running main()
+/* will setup the HBase 'station' table and run a query
+/* based on the input station id.
+/*********************************/
+
 public class HBaseStationQuery extends Configured implements Tool {
   static final byte[] INFO_COLUMNFAMILY = Bytes.toBytes("info");
   static final byte[] NAME_QUALIFIER = Bytes.toBytes("name");
