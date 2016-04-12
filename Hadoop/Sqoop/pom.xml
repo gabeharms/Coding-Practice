@@ -13,6 +13,23 @@
   <version>4.0</version>
   <name>Sqoop</name>
   <dependencies>
+      <dependency>
+          <groupId>com.hadoop</groupId>
+          <artifactId>common</artifactId>
+          <version>4.0</version>
+      </dependency>
+      <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-client</artifactId>
+          <version>${hadoop.version}</version>
+      </dependency>
+      
+      <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-minicluster</artifactId>
+          <version>${hadoop.version}</version>
+          <scope>test</scope>
+      </dependency>
     <dependency>
       <groupId>org.apache.sqoop</groupId>
       <artifactId>sqoop</artifactId>
@@ -28,28 +45,4 @@
       <classifier>hadoop2</classifier>
     </dependency>
   </dependencies>
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <descriptors>
-            <descriptor>../book/src/main/assembly/jar.xml</descriptor>
-          </descriptors>
-          <finalName>sqoop-examples</finalName>
-          <outputDirectory>${project.build.directory}/../..</outputDirectory>
-          <appendAssemblyId>false</appendAssemblyId>
-        </configuration>
-        <executions>
-          <execution>
-            <id>make-assembly</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
 </project>

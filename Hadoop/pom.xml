@@ -8,6 +8,7 @@
   <name>Hadoop: Practice with Temperature Data</name>
   
   <modules>
+    <module>common</module>
     <module>HDFS</module>
     <module>MapReduce</module>
     <module>Pig</module>

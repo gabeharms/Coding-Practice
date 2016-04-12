@@ -11,8 +11,33 @@
   <artifactId>MapReduce</artifactId>
   <packaging>jar</packaging>
   <version>4.0</version>
-  <name>Developing a MapReduce Application</name>
+  <name>MapReduce</name>
   <dependencies>
+      <dependency>
+          <groupId>com.hadoop</groupId>
+          <artifactId>common</artifactId>
+          <version>4.0</version>
+      </dependency>
+      <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-client</artifactId>
+          <version>${hadoop.version}</version>
+      </dependency>
+      
+      <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-minicluster</artifactId>
+          <version>${hadoop.version}</version>
+          <scope>test</scope>
+      </dependency>
+      
+      <dependency>
+          <groupId>org.apache.mrunit</groupId>
+          <artifactId>mrunit</artifactId>
+          <version>${mrunit.version}</version>
+          <classifier>hadoop2</classifier>
+          <scope>test</scope>
+      </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

@@ -1,4 +1,4 @@
-package v4;
+
 // == MaxTemperatureMapperTestV4Malformed
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;

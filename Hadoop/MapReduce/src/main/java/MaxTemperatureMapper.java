@@ -1,4 +1,3 @@
-package v4;
 // cc MaxTemperatureMapperV4 Mapper for maximum temperature example
 import java.io.IOException;
 

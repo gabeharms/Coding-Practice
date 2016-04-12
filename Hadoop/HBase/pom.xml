@@ -4,15 +4,32 @@
   <parent>
     <groupId>com.hadoop</groupId>
     <artifactId>root</artifactId>
-    <version>1.0</version>
+    <version>4.0</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <groupId>com.hadoop</groupId>
   <artifactId>HBase</artifactId>
   <packaging>jar</packaging>
   <version>4.0</version>
-  <name>HBase Learning</name>
+  <name>HBase</name>
   <dependencies>
+      <dependency>
+          <groupId>com.hadoop</groupId>
+          <artifactId>common</artifactId>
+          <version>4.0</version>
+      </dependency>
+      <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-client</artifactId>
+          <version>${hadoop.version}</version>
+      </dependency>
+      
+      <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-minicluster</artifactId>
+          <version>${hadoop.version}</version>
+          <scope>test</scope>
+      </dependency>
     <dependency>
       <groupId>com.hadoop</groupId>
       <artifactId>common</artifactId>
@@ -29,26 +46,6 @@
   </dependencies>
   <build>
     <plugins>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <descriptors>
-            <descriptor>../book/src/main/assembly/jar.xml</descriptor>
-          </descriptors>
-          <finalName>hbase-examples</finalName>
-          <outputDirectory>${project.build.directory}/../..</outputDirectory>
-          <appendAssemblyId>false</appendAssemblyId>
-        </configuration>
-        <executions>
-          <execution>
-            <id>make-assembly</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>

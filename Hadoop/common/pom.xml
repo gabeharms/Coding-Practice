@@ -7,17 +7,12 @@
     <version>4.0</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <groupId>com.hadoopbook</groupId>
-  <artifactId>ch16-pig</artifactId>
+  <groupId>com.hadoop</groupId>
+  <artifactId>common</artifactId>
   <packaging>jar</packaging>
   <version>4.0</version>
-  <name>Pig</name>
+  <name>Shared Code</name>
   <dependencies>
-      <dependency>
-          <groupId>com.hadoop</groupId>
-          <artifactId>common</artifactId>
-          <version>4.0</version>
-      </dependency>
       <dependency>
           <groupId>org.apache.hadoop</groupId>
           <artifactId>hadoop-client</artifactId>
@@ -30,15 +25,17 @@
           <version>${hadoop.version}</version>
           <scope>test</scope>
       </dependency>
-    <dependency>
-      <groupId>org.apache.pig</groupId>
-      <artifactId>pig</artifactId>
-    </dependency>
+      
+      <dependency>
+          <groupId>org.apache.mrunit</groupId>
+          <artifactId>mrunit</artifactId>
+          <version>${mrunit.version}</version>
+          <classifier>hadoop2</classifier>
+          <scope>test</scope>
+      </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
     </dependency>
   </dependencies>
-  <build>
-  </build>
 </project>
