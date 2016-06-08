@@ -5,7 +5,7 @@ class Soccer < Sport
   
   def initialize(goals)
     @goals = goals
-    super('Soccer', 22)
+    super(nil)
   end
 
 end

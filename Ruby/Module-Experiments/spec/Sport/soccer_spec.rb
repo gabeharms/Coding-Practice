@@ -16,14 +16,5 @@ describe Soccer do
     it "is_over?" do
       expect(subject).to respond_to(:is_over?)
     end
-     
-
   end
-
-  describe '#new' do
-    subject { described_class.new(4) }
-    
-     
-  end
-  
 end

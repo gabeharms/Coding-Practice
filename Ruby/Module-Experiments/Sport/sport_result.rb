@@ -1,13 +1,13 @@
-require 'pry'
-class SportResult < Module
-  attr_reader :winner
-
-  def initialize()
-    @winner = 5
-    attr_reader(:winner)
+class Winnable < Module
+  def set_winner(winner)
+    @winner = winner
   end
 
-  def in_over?()
-    return false
+  def winner
+    winner   
+  end
+
+  def is_over?
+    !winner.nil?
   end
 end

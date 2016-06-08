@@ -5,7 +5,7 @@ class Basketball < Sport
 
   def initialize(field_goals)
     @field_goals = field_goals
-    super('Basketball', 10)
+    super(nil)
   end
 
 end

@@ -1,9 +1,12 @@
 class Sport
-  attr_reader :name, :num_of_players
+  attr_reader :winner
 
-  def initialize(name, num_of_players)
-    @name = name
-    @num_of_players = num_of_players
+  def initialize(winner)
+    @winner = winner
+  end
+
+  def is_over?
+    !winner.nil?
   end
 
 end
