@@ -1,0 +1,7 @@
+[package]
+name = "httpservice"
+version = "0.1.0"
+authors = ["Gabe Harms <gabeharms@gmail.com>"]
+
+[dependencies]
+iron = "*"
