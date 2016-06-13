@@ -5,3 +5,5 @@ authors = ["Gabe Harms <gabeharms@gmail.com>"]
 
 [dependencies]
 iron = "*"
+rustc-serialize = "*"
+router = "*"
