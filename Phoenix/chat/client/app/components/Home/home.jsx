@@ -1,10 +1,13 @@
 import React from "react";
+import cssModules from "react-css-modules";
+import Sidebar from "../Sidebar/sidebar.jsx";
+import styles from "./home.css";
 
 const Home = (props) => {
   return (
     <div>
-      <h1>You are Home</h1>
-      <div>{props.message}</div>
+      <Sidebar />
+      <div className={styles.chatWrapper}>{props.message}</div>
     </div>
   );
 };
