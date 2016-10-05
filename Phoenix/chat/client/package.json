@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "test": "mocha --require babel-register --require .test-setup.js -R spec app/**/spec.js"
+    "test": "mocha --require babel-register --require .test-setup.js -R spec app/**/spec.js",
+    "cover": "nyc -n 'app' -r text -r html -r lcov npm test"
   },
   "author": "",
   "license": "ISC",
@@ -19,7 +20,9 @@
     "css-loader": "^0.25.0",
     "enzyme": "^2.4.1",
     "expect": "^1.20.2",
+    "jsdom": "^9.6.0",
     "mocha": "^3.1.0",
+    "nyc": "^8.3.0",
     "postcss-cssnext": "^2.8.0",
     "postcss-loader": "^0.13.0",
     "react-addons-test-utils": "^15.3.2",
