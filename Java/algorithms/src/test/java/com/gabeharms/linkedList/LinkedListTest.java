@@ -475,4 +475,60 @@ public class LinkedListTest
     assertEquals(node2, list.get(2).getPrevious());
     assertTrue(list.get(2).getNext() instanceof NullNode);
   }
+
+  /**
+   * @method reverse
+   * @context when empty list
+   */
+  public void testReverseEmptyList()
+  {
+    HeadNode<Integer> head = new HeadNode<Integer>(null, null);
+    LinkedList<Integer> list = new LinkedList<Integer>(head);
+
+    list.reverse();
+
+    assertEquals(0, list.size());
+    assertTrue(list.get(0) instanceof NullNode);
+  }
+
+  /**
+   * @method reverse
+   * @context when single node list
+   */
+  public void testReverseSingleNodeList()
+  {
+    Node<Integer> node1 = new RealNode<Integer>(5, null, null);
+    HeadNode<Integer> head = new HeadNode<Integer>(null, node1);
+    LinkedList<Integer> list = new LinkedList<Integer>(head);
+
+    list.reverse();
+
+    assertEquals(1, list.size());
+    assertEquals(node1, list.get(0));
+    assertTrue(list.get(1) instanceof NullNode);
+  }
+
+
+  /**
+   * @method reverse
+   * @context when 3 node list
+   */
+  public void testReverseThreeNodeList()
+  {
+    Node<Integer> node3 = new RealNode<Integer>(5, null, null);
+    Node<Integer> node2 = new RealNode<Integer>(5, null, node3);
+    Node<Integer> node1 = new RealNode<Integer>(5, null, node2);
+    HeadNode<Integer> head = new HeadNode<Integer>(null, node1);
+    node2.setPrevious(node1);
+    node3.setPrevious(node2);
+    LinkedList<Integer> list = new LinkedList<Integer>(head);
+
+    list.reverse();
+
+    assertEquals(3, list.size());
+    assertEquals(node3, list.get(0));
+    assertEquals(node2, list.get(1));
+    assertEquals(node1, list.get(2));
+    assertTrue(list.get(3) instanceof NullNode);
+  }
 }

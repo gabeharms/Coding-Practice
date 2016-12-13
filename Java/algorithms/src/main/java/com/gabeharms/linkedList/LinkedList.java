@@ -68,4 +68,20 @@ public class LinkedList<T>
 
     return nodeToRemove;
   }
+
+  public void reverse()
+  {
+    Node<T> currentNode = head.getNext();
+    while (!currentNode.isNull())
+    {
+      Node<T> nextNode = currentNode.getNext();
+      Node<T> previousNode = currentNode.getPrevious();
+
+      currentNode.setPrevious(nextNode);
+      currentNode.setNext(previousNode);
+
+      head.setNext(currentNode);
+      currentNode = nextNode;
+    }
+  }
 }
