@@ -10,9 +10,9 @@ import java.util.Arrays;
 
 
 /**
- * Unit test for SelectionSort.
+ * Unit test for RadixSort.
  */
-public class SelectionSortTest
+public class RadixSortTest
   extends SortingAlgorithmTest
 {
   /**
@@ -20,7 +20,7 @@ public class SelectionSortTest
    *
    * @param testName name of the test case
    */
-  public SelectionSortTest( String testName )
+  public RadixSortTest( String testName )
   {
     super( testName );
   }
@@ -30,7 +30,7 @@ public class SelectionSortTest
    */
   public static Test suite()
   {
-    return new TestSuite( SelectionSortTest.class );
+    return new TestSuite( RadixSortTest.class );
   }
 
   /**
@@ -39,7 +39,7 @@ public class SelectionSortTest
    */
   public void testAlreadySortedList()
   {
-    SelectionSort<Integer> sorter = new SelectionSort<Integer>(sortedList());
+    RadixSort sorter = new RadixSort(sortedList());
 
     assertEquals(sortedList(), sorter.sort());
   }
@@ -50,7 +50,7 @@ public class SelectionSortTest
    */
   public void testPartiallySortedList()
   {
-    SelectionSort<Integer> sorter = new SelectionSort<Integer>(partiallySortedList());
+    RadixSort sorter = new RadixSort(partiallySortedList());
 
     assertEquals(sortedList(), sorter.sort());
   }
@@ -61,7 +61,7 @@ public class SelectionSortTest
    */
   public void testUnsortedList()
   {
-    SelectionSort<Integer> sorter = new SelectionSort<Integer>(unsortedList());
+    RadixSort sorter = new RadixSort(unsortedList());
 
     assertEquals(sortedList(), sorter.sort());
   }
@@ -72,7 +72,7 @@ public class SelectionSortTest
    */
   public void testLargeUnsortedList()
   {
-    SelectionSort<Integer> sorter = new SelectionSort<Integer>(largeUnsortedList());
+    RadixSort sorter = new RadixSort(largeUnsortedList());
 
     assertEquals(largeSortedList(), sorter.sort());
   }

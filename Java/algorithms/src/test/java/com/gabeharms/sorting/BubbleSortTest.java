@@ -65,4 +65,15 @@ public class BubbleSortTest
 
     assertEquals(sortedList(), sorter.sort());
   }
+
+  /**
+   * @method sort
+   * @context Large Unsorted list
+   */
+  public void testLargeUnsortedList()
+  {
+    BubbleSort<Integer> sorter = new BubbleSort<Integer>(largeUnsortedList());
+
+    assertEquals(largeSortedList(), sorter.sort());
+  }
 }

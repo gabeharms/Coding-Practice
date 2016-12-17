@@ -65,4 +65,15 @@ public class InsertionSortTest
 
     assertEquals(sortedList(), sorter.sort());
   }
+
+  /**
+   * @method sort
+   * @context Large Unsorted list
+   */
+  public void testLargeUnsortedList()
+  {
+    InsertionSort<Integer> sorter = new InsertionSort<Integer>(largeUnsortedList());
+
+    assertEquals(largeSortedList(), sorter.sort());
+  }
 }

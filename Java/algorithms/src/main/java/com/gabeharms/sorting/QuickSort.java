@@ -18,10 +18,10 @@ public class QuickSort<T extends Comparable<T>> extends SortingAlgorithm<T>
 
   private void quickSort(int start, int end)
   {
-    if (end-start > 2)
+    if (end-start > 0)
     {
       int partition = partitionArray(start, end);
-      quickSort(0, partition-1);
+      quickSort(start, partition-1);
       quickSort(partition+1, end);
     }
   }
@@ -30,16 +30,16 @@ public class QuickSort<T extends Comparable<T>> extends SortingAlgorithm<T>
   {
     int swaps = 0;
     T partitionValue = list.get(end);
-    for (int i = start; i <= end; i++)
+    for (int i = start; i < getPartitionIndex(swaps, end); i++)
     {
       if (isGreaterThan(list.get(i), partitionValue)) {
-        moveValueFromTo(i, getPartitionIndex(swaps, end)-1);
+        swap(i, getPartitionIndex(swaps, end)-1);
         swaps++;
         i--;
       }
     }
 
-    adjustPartition(swaps, end);
+    swap(end, getPartitionIndex(swaps, end));
     return getPartitionIndex(swaps, end);
   }
 
@@ -57,18 +57,6 @@ public class QuickSort<T extends Comparable<T>> extends SortingAlgorithm<T>
   private int getPartitionIndex(int swaps, int end)
   {
     return end-swaps;
-  }
-
-  private void moveValueFromTo(int oldIndex, int newIndex)
-  {
-    T partitionValue = list.remove(oldIndex);
-    list.add(newIndex, partitionValue);
-  }
-
-  private void adjustPartition(int swaps, int end)
-  {
-    int partitionIndex = getPartitionIndex(swaps, end);
-    moveValueFromTo(partitionIndex, end);
   }
 
   public static void main( String[] args )

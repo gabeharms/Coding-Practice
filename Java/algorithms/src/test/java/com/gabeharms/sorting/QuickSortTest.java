@@ -65,4 +65,15 @@ public class QuickSortTest
 
     assertEquals(sortedList(), sorter.sort());
   }
+
+  /**
+   * @method sort
+   * @context Large Unsorted list
+   */
+  public void testLargeUnsortedList()
+  {
+    QuickSort<Integer> sorter = new QuickSort<Integer>(largeUnsortedList());
+
+    assertEquals(largeSortedList(), sorter.sort());
+  }
 }

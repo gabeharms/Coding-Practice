@@ -45,7 +45,22 @@ public class InsertionSort<T extends Comparable<T>> extends SortingAlgorithm<T>
   {
     for (int i = 0; i < sortedList.size(); i++)
     {
-      if (isLast(sortedList, i) || shouldInsertBetween(sortedList, i, value))
+      if (isLast(sortedList, i))
+      {
+        if (isGreaterThanOrEqual(value, sortedList.get(i)))
+        {
+          return i+1;
+        }
+        else
+        {
+          return i;
+        }
+      }
+      else if (isLessThanOrEqual(value, sortedList.get(i)))
+      {
+        return i;
+      }
+      else if (shouldInsertBetween(sortedList, i, value))
       {
         return i+1;
       }

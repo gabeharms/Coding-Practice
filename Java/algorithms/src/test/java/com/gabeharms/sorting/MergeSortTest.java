@@ -65,4 +65,15 @@ public class MergeSortTest
 
     assertEquals(sortedList(), sorter.sort());
   }
+
+  /**
+   * @method sort
+   * @context Large Unsorted list
+   */
+  public void testLargeUnsortedList()
+  {
+    MergeSort<Integer> sorter = new MergeSort<Integer>(largeUnsortedList());
+
+    assertEquals(largeSortedList(), sorter.sort());
+  }
 }
