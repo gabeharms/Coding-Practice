@@ -8,7 +8,7 @@ import java.util.ArrayDeque;
 
 class DijkstrasShortestPath extends GraphShortestPathAlgorithm
 {
-  private Hashtable<String, VertexCostDecorator> nodes;
+  private Hashtable<String, VertexCostDecorator> costVerticies;
   private Hashtable<VertexCostDecorator, VertexCostDecorator> predeccessors;
   private ArrayList<VertexCostDecorator> settled;
   private ArrayList<VertexCostDecorator> unsettled;
@@ -19,49 +19,69 @@ class DijkstrasShortestPath extends GraphShortestPathAlgorithm
     this.settled = new ArrayList<VertexCostDecorator>();
     this.unsettled = new ArrayList<VertexCostDecorator>();
     this.predeccessors = new Hashtable<VertexCostDecorator, VertexCostDecorator>();
-    this.nodes = transformNodes(graph.getNodes());
+    this.costVerticies = transformNodesToVerticies(graph.getNodes());
   }
 
   public ArrayList<Node> shortestPath(Node source, Node destination)
   {
-    unsettled.add(nodes.get(source.getLabel()));
-    nodes.get(source.getLabel()).setCost(0);
-    while(unsettled.size() != 0)
+    setCost(source.getLabel(), 0);
+    addToUnsettled(source.getLabel());
+    while(unsettledVerticesExist())
     {
-      VertexCostDecorator vertex = getMinimumCostVertex(unsettled);
-      unsettled.remove(vertex);
-      settled.add(vertex);
-      findMinimumDistancesOfAdjacencies(vertex);
+      updateAdjancentVertexDistancesAndSettle(getMinimumCostUnsettledVertex());
     }
-   return getPath(nodes.get(destination.getLabel()));
+    return getPathTo(getVertex(destination.getLabel()));
   }
 
+  private void updateAdjancentVertexDistancesAndSettle(VertexCostDecorator currentVertex)
+  {
+    updateMinimumDistancesOfAdjacencies(currentVertex);
+    removeFromUnsettled(currentVertex);
+    addToSettled(currentVertex);
+  }
 
-  private VertexCostDecorator getMinimumCostVertex(ArrayList<VertexCostDecorator> verticies)
+  private VertexCostDecorator getMinimumCostUnsettledVertex()
   {
     VertexCostDecorator minimum = null;
-    for (VertexCostDecorator vertex : verticies)
+    for (VertexCostDecorator unsettledVertex : unsettled)
     {
-      if (minimum == null || vertex.getCost() > minimum.getCost())
-      {
-        minimum = vertex;
-      }
+      minimum = lowerCostBetween(minimum, unsettledVertex);
     }
     return minimum;
   }
 
-  private void findMinimumDistancesOfAdjacencies(VertexCostDecorator vertex)
+  private void updateMinimumDistancesOfAdjacencies(VertexCostDecorator currentVertex)
   {
-    for(Node adjacentNode : graph.adjacenciesFor((Node)vertex))
+    for(Node adjacentNode : graph.adjacenciesFor((Node)currentVertex))
     {
-      VertexCostDecorator adjacentVertex = nodes.get(adjacentNode.getLabel());
-      if (adjacentVertex.getCost() > (vertex.getCost() + edgeCostBetween(vertex, adjacentVertex)))
-      {
-        adjacentVertex.setCost(vertex.getCost() + edgeCostBetween(vertex, adjacentVertex));
-        predeccessors.put(adjacentVertex, vertex);
-        unsettled.add(adjacentVertex);
-      }
+      updateMinimumDistancesOfAdjacentVertex(currentVertex, getVertex(adjacentNode.getLabel()));
     }
+  }
+
+  private void updateMinimumDistancesOfAdjacentVertex(VertexCostDecorator currentVertex, VertexCostDecorator adjacentVertex)
+  {
+    int costThroughCurrentVertex =  costThroughVertex(currentVertex, adjacentVertex);
+    if (currentCost(adjacentVertex) > costThroughCurrentVertex)
+    {
+      updateAdjacencyCostAndParentAndUnsettle(currentVertex, adjacentVertex, costThroughCurrentVertex);
+    }
+  }
+
+  private void updateAdjacencyCostAndParentAndUnsettle(VertexCostDecorator currentVertex, VertexCostDecorator adjacentVertex, int newCost)
+  {
+    adjacentVertex.setCost(newCost);
+    setParent(adjacentVertex, currentVertex);
+    addToUnsettled(adjacentVertex.getLabel());
+  }
+
+  private int costThroughVertex(VertexCostDecorator currentVertex, VertexCostDecorator adjacentVertex)
+  {
+    return currentVertex.getCost() + directCostBetween(currentVertex, adjacentVertex);
+  }
+
+  private int directCostBetween(VertexCostDecorator a, VertexCostDecorator b)
+  {
+    return ((SegmentCostDecorator)(graph.getEdgeFor((Node)a, (Node)b))).getCost();
   }
 
   private int edgeCostBetween(VertexCostDecorator a, VertexCostDecorator b)
@@ -69,27 +89,93 @@ class DijkstrasShortestPath extends GraphShortestPathAlgorithm
     return ((SegmentCostDecorator)(graph.getEdgeFor((Node)a, (Node)b))).getCost();
   }
 
-  private Hashtable<String, VertexCostDecorator> transformNodes(ArrayList<Node> originalNodes)
+  private Hashtable<String, VertexCostDecorator> transformNodesToVerticies(ArrayList<Node> originalNodes)
   {
-    int count = 0;
-    Hashtable<String, VertexCostDecorator> newNodes = new Hashtable<String, VertexCostDecorator>();
+    Hashtable<String, VertexCostDecorator> newVerticies = new Hashtable<String, VertexCostDecorator>();
     for (Node node : originalNodes)
     {
-      newNodes.put(node.getLabel(), new VertexCostDecorator((Vertex)node, null, Integer.MAX_VALUE));
+      newVerticies.put(node.getLabel(), new VertexCostDecorator((Vertex)node, null, Integer.MAX_VALUE));
     }
-    return newNodes;
+    return newVerticies;
   }
 
-  private ArrayList<Node> getPath(VertexCostDecorator destination)
+  private ArrayList<Node> getPathTo(VertexCostDecorator destination)
   {
     ArrayList<Node> result = new ArrayList<Node>();
     VertexCostDecorator currentVertex = destination;
     while (currentVertex != null)
     {
       result.add((Node)currentVertex);
-      currentVertex = predeccessors.get(currentVertex);
+      currentVertex = getParent(currentVertex);
     }
     Collections.reverse(result);
     return result;
+  }
+
+  private void addToUnsettled(String vertexLabel)
+  {
+    unsettled.add(getVertex(vertexLabel));
+  }
+
+  private VertexCostDecorator getVertex(String vertexLabel)
+  {
+    return costVerticies.get(vertexLabel);
+  }
+
+  private void setCost(String vertexLabel, int cost)
+  {
+    getVertex(vertexLabel).setCost(0);
+  }
+
+  private boolean unsettledVerticesExist()
+  {
+    return unsettled.size() != 0;
+  }
+
+  private void removeFromUnsettled(VertexCostDecorator vertex)
+  {
+    unsettled.remove(vertex);
+  }
+
+  private void addToSettled(VertexCostDecorator vertex)
+  {
+    settled.add(vertex);
+  }
+
+  private boolean notSet(VertexCostDecorator vertex)
+  {
+    return vertex == null;
+  }
+
+  private boolean costsLessThan(VertexCostDecorator a, VertexCostDecorator b)
+  {
+    return a.getCost() < b.getCost();
+  }
+
+  private void setParent(VertexCostDecorator a, VertexCostDecorator b)
+  {
+    predeccessors.put(a, b);
+  }
+  
+  private VertexCostDecorator getParent(VertexCostDecorator vertex)
+  {
+    return predeccessors.get(vertex);
+  }
+
+  private VertexCostDecorator lowerCostBetween(VertexCostDecorator a, VertexCostDecorator b)
+  {
+    if (notSet(a) || costsLessThan(b, a))
+    {
+      return b;
+    }
+    else 
+    {
+      return a;
+    }
+  }
+
+  private int currentCost(VertexCostDecorator vertex)
+  {
+    return vertex.getCost();
   }
 }
