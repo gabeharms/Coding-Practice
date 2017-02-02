@@ -7,34 +7,36 @@ import java.util.ArrayDeque;
 
 class BreadthFirstSearch extends GraphTraversalAlgorithm
 {
-  private Hashtable<String, VertexCostDecorator> nodes;
+  private Hashtable<String, VertexCostDecorator> verticies;
   private Queue<VertexCostDecorator> queue;
   private ArrayList<Node> result;
+  private int cost;
 
   public BreadthFirstSearch(Graph graph)
   {
     super(graph);
     this.queue = new ArrayDeque<VertexCostDecorator>();
-    this.nodes = transformNodes(graph.getNodes());
+    this.verticies = transformNodes(graph.getNodes());
     this.result = new ArrayList<Node>();
+    this.cost = 0;
   }
 
   public ArrayList<Node> traverse(Node source)
   {
     int currentCost = 0;
     VertexCostDecorator currentNode;
-    enqueue(nodes.get(source.getLabel()));
-    while (!queue.isEmpty())
+    enqueue(source.getLabel());
+    while (queueIsNotEmpty())
     {
       currentNode = dequeue();
       for (Node adjacentNode : graph.adjacenciesFor(currentNode))
       {
-        VertexCostDecorator adjacentVertex = nodes.get(adjacentNode.getLabel());
+        VertexCostDecorator adjacentVertex = verticies.get(adjacentNode.getLabel());
         if (!adjacentVertex.isVisited())
         {
           adjacentVertex.setCost(currentNode.getCost() + 1);
           adjacentVertex.setPredecessor((Node)currentNode);
-          enqueue(adjacentVertex);
+          enqueue(adjacentVertex.getLabel());
         }
       }
       if (!currentNode.isVisited()) {
@@ -45,9 +47,14 @@ class BreadthFirstSearch extends GraphTraversalAlgorithm
     return result;
   }
 
-  private void enqueue(VertexCostDecorator vertex)
+  private void enqueue(String vertexLabel)
   {
-    queue.add(vertex);
+    queue.add(getVertex(vertexLabel));
+  }
+
+  private VertexCostDecorator getVertex(String vertexLabel)
+  {
+    return verticies.get(vertexLabel);
   }
 
   private VertexCostDecorator dequeue()
@@ -63,5 +70,10 @@ class BreadthFirstSearch extends GraphTraversalAlgorithm
       newNodes.put(node.getLabel(), new VertexCostDecorator((Vertex)node, null, 0));
     }
     return newNodes;
+  }
+
+  private boolean queueIsNotEmpty()
+  { 
+    return !queue.isEmpty();
   }
 }
