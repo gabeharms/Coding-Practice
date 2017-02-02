@@ -109,7 +109,6 @@ public class DijkstrasShortestPathTest
    */
   public void testThreeNodeGraph1AToC()
   {
-    System.out.println("************************************");
     Graph graph = threeNodeGraph1();
     GraphShortestPathAlgorithm shortestPathAlgorithm = new DijkstrasShortestPath(graph);
     Node startingNode = graph.getNode("a");
@@ -118,8 +117,6 @@ public class DijkstrasShortestPathTest
     ArrayList<Node> actualResult = shortestPathAlgorithm.shortestPath(startingNode, endingNode);
 
     String[] expectedResult = {"a", "b", "c"};
-    System.out.print("Result: "); System.out.println(Arrays.toString(nodeListToLabelArray(actualResult)));
-    System.out.println("************************************");
     assertTrue(Arrays.equals(expectedResult, nodeListToLabelArray(actualResult)));
   }
 

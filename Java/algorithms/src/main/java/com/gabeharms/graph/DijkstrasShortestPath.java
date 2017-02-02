@@ -29,7 +29,6 @@ class DijkstrasShortestPath extends GraphShortestPathAlgorithm
     while(unsettled.size() != 0)
     {
       VertexCostDecorator vertex = getMinimumCostVertex(unsettled);
-      System.out.print("Current Vertex: "); System.out.println(vertex.getLabel());
       unsettled.remove(vertex);
       settled.add(vertex);
       findMinimumDistancesOfAdjacencies(vertex);
@@ -56,7 +55,6 @@ class DijkstrasShortestPath extends GraphShortestPathAlgorithm
     for(Node adjacentNode : graph.adjacenciesFor((Node)vertex))
     {
       VertexCostDecorator adjacentVertex = nodes.get(adjacentNode.getLabel());
-      System.out.print("Adjacent Vertex: "); System.out.print(adjacentVertex.getLabel()); System.out.print(". Current Cost: "); System.out.print(adjacentVertex.getCost()); System.out.print(". Cost to vertex: "); System.out.println(vertex.getCost() + edgeCostBetween(vertex, adjacentVertex));
       if (adjacentVertex.getCost() > (vertex.getCost() + edgeCostBetween(vertex, adjacentVertex)))
       {
         adjacentVertex.setCost(vertex.getCost() + edgeCostBetween(vertex, adjacentVertex));
@@ -86,7 +84,6 @@ class DijkstrasShortestPath extends GraphShortestPathAlgorithm
   {
     ArrayList<Node> result = new ArrayList<Node>();
     VertexCostDecorator currentVertex = destination;
-    System.out.print("Predecessors: "); System.out.println(predeccessors);
     while (currentVertex != null)
     {
       result.add((Node)currentVertex);
