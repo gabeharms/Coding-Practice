@@ -9,42 +9,54 @@ class BreadthFirstSearch extends GraphTraversalAlgorithm
 {
   private Hashtable<String, VertexCostDecorator> verticies;
   private Queue<VertexCostDecorator> queue;
-  private ArrayList<Node> result;
-  private int cost;
+  private ArrayList<Node> path;
 
   public BreadthFirstSearch(Graph graph)
   {
     super(graph);
     this.queue = new ArrayDeque<VertexCostDecorator>();
     this.verticies = transformNodes(graph.getNodes());
-    this.result = new ArrayList<Node>();
-    this.cost = 0;
+    this.path = new ArrayList<Node>();
   }
 
   public ArrayList<Node> traverse(Node source)
   {
-    int currentCost = 0;
-    VertexCostDecorator currentNode;
     enqueue(source.getLabel());
     while (queueIsNotEmpty())
     {
-      currentNode = dequeue();
-      for (Node adjacentNode : graph.adjacenciesFor(currentNode))
-      {
-        VertexCostDecorator adjacentVertex = verticies.get(adjacentNode.getLabel());
-        if (!adjacentVertex.isVisited())
-        {
-          adjacentVertex.setCost(currentNode.getCost() + 1);
-          adjacentVertex.setPredecessor((Node)currentNode);
-          enqueue(adjacentVertex.getLabel());
-        }
-      }
-      if (!currentNode.isVisited()) {
-        result.add((Node)currentNode);
-      }
-      currentNode.markVisited();
+      visitVertex(dequeue());
     }
-    return result;
+    return path;
+  }
+
+  private void visitVertex(VertexCostDecorator currentVertex)
+  {
+    updateAdjacencies(currentVertex);
+    if (notVisited(currentVertex)) {
+      addToPathAndMarkVisited(currentVertex);
+    }
+  }
+
+  private void addToPathAndMarkVisited(VertexCostDecorator vertex)
+  {
+    addToPath(vertex);
+    vertex.markVisited();
+  }
+
+  private void updateAdjacencies(VertexCostDecorator currentVertex)
+  {
+    for (Node adjacentNode : graph.adjacenciesFor((Node)currentVertex))
+    {
+      updateAdjacencyCostAndParentAndEnqueue(currentVertex, getVertex(adjacentNode.getLabel()));
+    }
+  }
+
+  private void updateAdjacencyCostAndParentAndEnqueue(VertexCostDecorator currentVertex, VertexCostDecorator adjacentVertex)
+  {
+    if (notVisited(adjacentVertex))
+    {
+      enqueue(adjacentVertex.getLabel());
+    }
   }
 
   private void enqueue(String vertexLabel)
@@ -75,5 +87,15 @@ class BreadthFirstSearch extends GraphTraversalAlgorithm
   private boolean queueIsNotEmpty()
   { 
     return !queue.isEmpty();
+  }
+  
+  private boolean notVisited(VertexCostDecorator vertex)
+  {
+    return !vertex.isVisited();
+  }
+
+  private void addToPath(VertexCostDecorator vertex)
+  {
+    path.add((Node)vertex);
   }
 }
