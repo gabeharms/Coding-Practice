@@ -6,50 +6,56 @@ import java.util.Hashtable;
 
 class DepthFirstSearch extends GraphTraversalAlgorithm
 {
-  private Hashtable<String, VertexCostDecorator> nodes;
+  private Hashtable<String, VertexCostDecorator> verticies;
   private Stack<VertexCostDecorator> stack;
-  private ArrayList<Node> result;
+  private ArrayList<Node> path;
 
   public DepthFirstSearch(Graph graph)
   {
     super(graph);
     this.stack = new Stack<VertexCostDecorator>();
-    this.nodes = transformNodes(graph.getNodes());
-    this.result = new ArrayList<Node>();
+    this.verticies = transformNodes(graph.getNodes());
+    this.path = new ArrayList<Node>();
   }
 
   public ArrayList<Node> traverse(Node source)
   {
-    int currentCost = 0;
-    VertexCostDecorator currentVertex = nodes.get(source.getLabel());
-    currentVertex.setCost(0);
-    currentVertex.markVisited();
-    push(currentVertex);
-    result.add(currentVertex);
-    while (!stack.empty())
+    VertexCostDecorator currentVertex = verticies.get(source.getLabel());
+    getVertex(source.getLabel()).markVisited();
+    push(source.getLabel());
+    addToPath(source.getLabel());
+    while (stackNotEmpty())
     {
-      currentVertex = top();
-      VertexCostDecorator adjacentVertex = getAdjacentUnvisitedVertex(top());
-      if (adjacentVertex == null)
+      traverseAdjacencies(top());
+    }
+    return path;
+  }
+
+  private void traverseAdjacencies(VertexCostDecorator currentVertex)
+  {
+      VertexCostDecorator adjacentVertex = getAdjacentUnvisitedVertex(currentVertex);
+      if (noAdjacencyExists(adjacentVertex))
       {
-        pop();
+        popCurrentVertex();
       }
       else
       {
-        adjacentVertex.markVisited();
-        adjacentVertex.setCost(currentVertex.getCost() + 1);
-        adjacentVertex.setPredecessor((Node)currentVertex);
-        result.add(adjacentVertex);
-        push(adjacentVertex);
+        visitAdjacentVertex(currentVertex, adjacentVertex);
       }
-    }
-    return result;
+  }
+
+  private void visitAdjacentVertex(VertexCostDecorator currentVertex, VertexCostDecorator adjacentVertex)
+  {
+
+    adjacentVertex.markVisited();
+    addToPath(adjacentVertex.getLabel());
+    push(adjacentVertex.getLabel());
   }
 
   private VertexCostDecorator getAdjacentUnvisitedVertex(VertexCostDecorator vertex)
   {
     for (Node adjacentNode : graph.adjacenciesFor((Node)vertex)) {
-      VertexCostDecorator adjacentVertex = nodes.get(adjacentNode.getLabel());
+      VertexCostDecorator adjacentVertex = verticies.get(adjacentNode.getLabel());
       if (!adjacentVertex.isVisited())
       {
         return adjacentVertex;
@@ -58,9 +64,19 @@ class DepthFirstSearch extends GraphTraversalAlgorithm
     return null;
   }
 
-  private void push(VertexCostDecorator vertex)
+  private void push(String vertexLabel)
   {
-    stack.push(vertex);
+    stack.push(getVertex(vertexLabel));
+  }
+
+  private VertexCostDecorator getVertex(String vertexLabel)
+  {
+    return verticies.get(vertexLabel);
+  }
+
+  private void popCurrentVertex()
+  {
+    pop();
   }
 
   private VertexCostDecorator pop()
@@ -81,5 +97,20 @@ class DepthFirstSearch extends GraphTraversalAlgorithm
       newNodes.put(node.getLabel(), new VertexCostDecorator((Vertex)node, null, 0));
     }
     return newNodes;
+  }
+  
+  private void addToPath(String vertexLabel)
+  {
+    path.add(getVertex(vertexLabel));
+  }
+  
+  private boolean stackNotEmpty()
+  {
+    return !stack.empty();
+  }
+
+  private boolean noAdjacencyExists(VertexCostDecorator vertex)
+  {
+    return vertex == null;
   }
 }
