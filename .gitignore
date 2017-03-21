@@ -1,3 +1,9 @@
 **/node_modules
 **/node_modules/*
 **/target
+**/elm-stuff
+**/elm-stuff/*
+**/HelloApp/lib/*
+**/HelloWorld/lib/*
+**/HelloApp/bin/*
+**/HelloWorld/bin/*
