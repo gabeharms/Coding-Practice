@@ -1,0 +1,32 @@
+{
+  "name": "graphql-pokemon-server",
+  "version": "0.1.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon src/server",
+    "test": "NODE_ENV=testing jest --forceExit --runInBand",
+    "start": "NODE_ENV=production node src/server",
+    "deploy": "now --local-config ./now.json"
+  },
+  "dependencies": {
+    "bcrypt": "^2.0.1",
+    "dataloader": "^1.4.0",
+    "dotenv": "^5.0.1",
+    "graphql-yoga": "^1.8.5",
+    "jsonwebtoken": "^8.3.0",
+    "lodash": "^4.17.5",
+    "mongoose": "^5.0.15",
+    "nodemon": "^1.17.5"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.2.3",
+    "eslint": "^4.19.1",
+    "eslint-config-equimper": "^2.2.2",
+    "eslint-config-prettier": "^2.9.0",
+    "graphql": "^0.13.2",
+    "graphql-tools": "^2.24.0",
+    "jest": "^22.4.3",
+    "prettier": "^1.12.1"
+  }
+}

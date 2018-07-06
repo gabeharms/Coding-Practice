@@ -1,0 +1,50 @@
+# This represents all of the possible fields (qualities) of
+# one unique Pokemon
+type Pokemon {
+  # Every pokemon has a unique ID, in our case, a MongoDB _ID
+  id: ID!
+  # The name of our little friend!
+  name: String!
+  # The classification is the "Type" of pokemon
+  classification: String!
+  # The full path to the CDN hosting Pokemon art from the Pokedex
+  img: String!
+  # The "Type" of Pokemon, generally a combination of types.
+  type: [String]!
+  # The Height of the Pokemon in Inches
+  height: String!
+  # The Weight of the Pokemon in (who knows?)
+  weight: String!
+  # The "Happiness" of a Pokemon out of 100%
+  happiness: String!
+  # The level of damage the Pokemon recevies based upon the numeric
+  # values that are provided.
+  damages: Damage!
+  # The team (if availabile) the Pokemon belongs to
+  team: Team
+}
+
+type Damage {
+  normal: String
+  fire: String
+  water: String
+  electric: String
+  grass: String
+  ice: String
+  fight: String
+  poison: String
+  ground: String
+  flying: String
+  psychic: String
+  bug: String
+  rock: String
+  ghost: String
+  dragon: String
+  dark: String
+  steel: String
+}
+
+type Query {
+  pokemon(id: ID!): Pokemon!
+  allPokemons(limit: Int): [Pokemon]!
+}

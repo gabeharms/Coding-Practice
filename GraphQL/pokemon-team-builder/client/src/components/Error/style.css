@@ -1,0 +1,10 @@
+.ErrorMessage {
+  margin: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+.ErrorMessage-heading {
+  justify-content: center;
+  display: flex;
+}

@@ -1,0 +1,48 @@
+{
+  "name": "pokemon-team-picker",
+  "version": "0.2.0",
+  "author": {
+    "name": "Ryan Yogan",
+    "email": "ryanyogan@gmail.com",
+    "url": "https://ryanyogan.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:ryanyogan/pokemon-team-picker.git"
+  },
+  "private": true,
+  "dependencies": {
+    "@procore/core-react": "^4.0.3",
+    "apollo-cache-inmemory": "^1.2.1",
+    "apollo-client": "^2.3.1",
+    "apollo-link": "^1.2.2",
+    "apollo-link-http": "^1.5.4",
+    "global": "^4.3.2",
+    "graphql": "^0.13.2",
+    "graphql-tag": "^2.9.2",
+    "react": "^16.4.0",
+    "react-apollo": "^2.1.4",
+    "react-bootstrap": "^0.32.1",
+    "react-dom": "^16.4.0",
+    "react-router-dom": "^4.2.2",
+    "react-scripts": "1.1.0",
+    "recompose": "^0.27.1",
+    "yarn": "^1.7.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.2.3",
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
+    "eslint": "^4.19.1",
+    "eslint-config-equimper": "^2.2.2",
+    "eslint-config-prettier": "^2.9.0",
+    "prettier": "^1.13.0",
+    "react-apollo-async-testing": "^0.0.4"
+  }
+}
