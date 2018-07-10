@@ -3,7 +3,7 @@
             [guestbook.db.core :as db]
             [compojure.core :refer [defroutes GET POST]]
             [ring.util.http-response :as response]
-            [struc.core :as st]
+            [struct.core :as st]
             [clojure.java.io :as io]))
 
 (def message-schema
@@ -16,8 +16,8 @@
     {:message "message must contain at least 10 characters"}
     {:validate #(> (count %) 9)}]])
 
-defn validate-message [params]
-  (first (st/validate params message-schema))
+(defn validate-message [params]
+  (first (st/validate params message-schema)))
 
 (defn save-message! [{:keys [params]}]
   (if-let [errors (validate-message params)]
@@ -28,10 +28,11 @@ defn validate-message [params]
         (assoc params :timestamp (java.util.Date.)))
       (response/found "/"))))
 
-(defn home-page []
+
+(defn home-page [{:keys [flash]}]
   (layout/render
-    "home.html" 
-    (merge {:messages (db/get-messagess)}
+    "home.html"
+    (merge {:messages (db/get-messages)}
            (select-keys flash [:name :message :errors]))))
 
 (defn about-page []
