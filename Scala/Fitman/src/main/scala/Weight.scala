@@ -1,4 +1,4 @@
-import java.time.Instant
+import org.joda.time.Instant
 
 case class Weight(
     user: String,

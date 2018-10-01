@@ -22,4 +22,35 @@ class WeightResourceFeatureTest extends FeatureTest {
                 withLocation = "/weights/gabe"
         )
     }
+
+    test("WeightResource should list all weights for a user when GET request is made") {
+        val response = server.httpPost(
+            path = "/weights",
+            postBody =
+            """
+                |{
+                |"user":"test_user_1",
+                |"weight":80,
+                |"posted_at" : "2017-09-14T23:16:06.871Z"
+                |}
+                """.stripMargin,
+            andExpect = Status.Created
+        )
+        
+        server.httpGetJson[List[Weight]](
+            path = response.location.get,
+            andExpect = Status.Ok,
+            withJsonBody =
+            """
+                |[
+                |  {
+                |    "user" : "test_user_1",
+                |    "weight" : 80,
+                |    "posted_at" : "2017-09-14T23:16:06.871Z"
+                |  }
+                |]
+                """.stripMargin
+        )
+    }
+
 }
