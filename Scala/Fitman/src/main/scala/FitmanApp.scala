@@ -7,6 +7,7 @@ object FitmanApp extends FitmanServer
 class FitmanServer extends HttpServer {
     override protected def configureHttp(router: HttpRouter) {
         router.add[HelloController]
+        router.add(new WeightResource)
     }
 }
 
