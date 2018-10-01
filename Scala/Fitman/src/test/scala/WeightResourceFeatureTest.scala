@@ -53,4 +53,17 @@ class WeightResourceFeatureTest extends FeatureTest {
         )
     }
 
+    test("Bad request when user is not present in request") {
+        server.httpPost(
+            path = "/weights",
+            postBody =
+            """
+                |{
+                |"weight":85
+                |}
+            """.stripMargin,
+            andExpect = Status.BadRequest
+        )
+    }
+
 }

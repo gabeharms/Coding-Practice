@@ -1,13 +1,16 @@
 import com.twitter.finagle.http.Request
 import com.twitter.finatra.http.routing.HttpRouter
+import com.twitter.finatra.http.filters.CommonFilters
 import com.twitter.finatra.http.{Controller, HttpServer}
 
-object FitmanApp extends FitmanServer
+object FitmanApp extends FitmanServer 
 
 class FitmanServer extends HttpServer {
     override protected def configureHttp(router: HttpRouter) {
-        router.add[HelloController]
-        router.add(new WeightResource)
+        router
+            .filter[CommonFilters]
+            .add[HelloController]
+            .add[WeightResource]
     }
 }
 
