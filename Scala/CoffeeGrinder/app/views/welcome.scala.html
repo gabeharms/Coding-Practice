@@ -1,0 +1,22 @@
+@(message: String, style: String = "scala") 
+
+@defining(play.core.PlayVersion.current) { version =>
+
+<section id="top">
+  <div class="wrapper">
+    <h1>@message</h1>
+  </div>
+</section>
+
+<div id="content" class="wrapper doc">
+<article>
+
+  <h1>Welcome to Coffee Grinder</h1>
+
+  <p>
+    Here, you tell us what coffee you'd like, and we grind it for ya. But you'll have to go to a coffee shop if you want it brewed into coffee of course.
+  </p>
+</article>
+
+</div>
+}
