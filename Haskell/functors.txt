@@ -1,0 +1,61 @@
+class Functor f where  
+    fmap :: (a -> b) -> f a -> f b  
+
+fmap takes a function from one type to another and a functor applied with one type 
+and returns a functor applied with another type.
+
+map :: (a -> b) -> [a] -> [b].
+
+So map is a function that takes a function fro mone type to another and a list of
+one type and returns a list of another type. This is a functor! In fact, 
+map is just a fmap that only works for lists. Here's how list defines its
+instance of the Functor typeclass
+
+instance Functor [] where
+  fmap = map
+
+Notice how we used [] instead of [a]. Thats because [a] is a concrete type. And
+[] is a type constructor. Thats because f must be a type constructor.
+
+Types that act like a box can be functors. You can think of a list as a box that
+has an infinite amount of little compartments. So what else acts like a box.
+
+Maybe ais like a box that can either hold nothing or hold one item. Here's how
+maybe is a functor
+
+instance Functor Maybe where
+  fmap f (Just x) = Just (f x)
+  fmap f Nothing  = Nothing
+
+Again notice how we use Maybe instead of Maybe a since the former is a type constructor and the later
+is a concrete type.
+
+If its an empty value of Nothing then return nothing. If we map over an empty box, we get an empty
+box. Just like if we map over an empty list, we get an empty list.
+
+If its ont an empty value, but rather a single value packed up in a Just box, then we apply that
+function on the contents of the Just box, and return a Just box that contains the result of applying
+that function.
+
+A Tree can also be a functor
+
+instance Functor Tree where
+  fmap f (Tree node left right) = Tree (f node) (fmap f left) (fmap f right)
+  fmap f EmptyTree = EmptyNode
+
+What about either. Thats a container that contains either right or left.
+
+instance Functor (Either a) where
+  fmap f (Right x) = (Right (f x))
+  fmap f (Left x) = Left x
+
+Don't be fooled, Either a is still a type consturctor that requires another parameter. Where just
+Either is a type constructor that takes two parameters. Remember how Either is defined
+
+data Either a b = Left a | Right b
+
+The reason why we don't apply f to the left type is because f is considered to be an empty type. 
+Equivalent to Nothing in Maybe. 
+
+With the Functor typeclass, we've seen how typeclasses can represent pretty cool higher-order concepts. 
+
