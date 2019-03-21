@@ -8,3 +8,7 @@
 **/HelloApp/bin/*
 **/HelloWorld/bin/*
 *.DS_Store
+*.env
+**/serverWithState/bin/*
+**/serverWithState/vendor/*
+**/.serverless/**
