@@ -58,7 +58,7 @@ functions:
     events:
       - http:
           path: hello
-          method: get
+          method: post
   world:
     handler: bin/world
     events:
