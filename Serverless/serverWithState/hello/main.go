@@ -1,47 +1,65 @@
 package main
 
 import (
-	"bytes"
-	"context"
-	"encoding/json"
-  "fmt"
+	"time"
+	"log"
+//	"net/http"
+  "github.com/google/uuid"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+  "github.com/awslabs/aws-lambda-go-api-proxy/gin"
+	"github.com/gin-gonic/gin"
 )
 
-// Response is of type APIGatewayProxyResponse since we're leveraging the
-// AWS Lambda Proxy Request functionality (default behavior)
-//
-// https://serverless.com/framework/docs/providers/aws/events/apigateway/#lambda-proxy-integration
-type Response events.APIGatewayProxyResponse
 
-// Handler is our lambda handler invoked by the `lambda.Start` function call
-func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (Response, error) {
-  fmt.Println("Received body: ", request.Body)
+var ginLambda *ginadapter.GinLambda
 
-	var buf bytes.Buffer
+func Handler(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	if ginLambda == nil {
+		// stdout and stderr are sent to AWS CloudWatch Logs
+		log.Printf("Cold start")
+		r := gin.Default()
+		r.POST("/add", addNumbers)
 
-	body, err := json.Marshal(map[string]interface{}{
-		"message": request.Body,
-	})
-	if err != nil {
-		return Response{StatusCode: 404}, err
-	}
-	json.HTMLEscape(&buf, body)
-
-	resp := Response{
-		StatusCode:      200,
-		IsBase64Encoded: false,
-		Body:            buf.String(),
-		Headers: map[string]string{
-			"Content-Type":           "application/json",
-			"X-MyCompany-Func-Reply": "hello-handler",
-		},
+		ginLambda = ginadapter.New(r)
 	}
 
-	return resp, nil
+	return ginLambda.Proxy(req)
 }
 
 func main() {
 	lambda.Start(Handler)
+}
+
+type Pet struct {
+	ID          string    `json:"id"`
+	Breed       string    `json:"breed"`
+	Name        string    `json:"name"`
+	DateOfBirth time.Time `json:"dateOfBirth"`
+}
+
+func getUUID() string {
+	uuid, err := uuid.NewRandom()
+	if err != nil {
+		log.Fatal(err)
+		return ""
+	}
+	return uuid.String()
+}
+
+func addNumbers(c *gin.Context) {
+  c.JSON(200, gin.H{
+			"message": "pong",
+		})
+	/*
+  newPet := Pet{}
+	err := c.BindJSON(&newPet)
+
+	if err != nil {
+		return
+	}
+
+	newPet.ID = getUUID()
+	c.JSON(http.StatusAccepted, newPet)
+  */
 }
