@@ -3,7 +3,7 @@ package main
 import (
 	"time"
 	"log"
-//	"net/http"
+	"net/http"
   "github.com/google/uuid"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -48,18 +48,16 @@ func getUUID() string {
 }
 
 func addNumbers(c *gin.Context) {
-  c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	/*
-  newPet := Pet{}
+	newPet := Pet{}
 	err := c.BindJSON(&newPet)
 
 	if err != nil {
+    c.JSON(200, gin.H{
+			"message": "JSON not in correct format",
+		})
 		return
 	}
 
 	newPet.ID = getUUID()
 	c.JSON(http.StatusAccepted, newPet)
-  */
 }
