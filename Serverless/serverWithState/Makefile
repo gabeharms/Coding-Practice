@@ -2,7 +2,7 @@
 
 build:
 	dep ensure -v
-	env GOOS=linux go build -ldflags="-s -w" -o bin/app app/main.go
+	env GOOS=linux go build -ldflags="-s -w" -o bin/app main.go
 
 clean:
 	rm -rf ./bin ./vendor Gopkg.lock
