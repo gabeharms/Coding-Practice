@@ -54,17 +54,11 @@ package:
 
 functions:
   hello:
-    handler: bin/hello
+    handler: bin/app
     events:
       - http:
           path: /{any+}
           method: ANY
-  world:
-    handler: bin/world
-    events:
-      - http:
-          path: world
-          method: get
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
