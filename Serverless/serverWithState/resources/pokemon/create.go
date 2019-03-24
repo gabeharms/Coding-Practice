@@ -1,22 +1,28 @@
 package pokemon
 
 import (
+  "fmt"
   "net/http"
   "github.com/gin-gonic/gin"
+  "github.com/guregu/dynamo"
 )
 
 
 func Create(c *gin.Context) {
   newPokemon := Pokemon{}
-  err := c.BindJSON(&newPokemon)
+  err1 := c.BindJSON(&newPokemon)
 
-  if err != nil {
+  newPokemon.ID = getUUID()
+
+  db := c.Keys["db"].(*dynamo.DB)
+  err2 := db.Table("Pokemon").Put(newPokemon).Run()
+
+  if err1 != nil || err2 != nil{
     c.JSON(400, gin.H{
-      "error": "JSON not in correct format",
+      "error": fmt.Sprintf("Sorry, server no likey. %s", err2),
     })
     return
   }
 
-  newPokemon.ID = getUUID()
   c.JSON(http.StatusAccepted, newPokemon)
 }
