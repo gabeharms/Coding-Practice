@@ -34,6 +34,7 @@ func Handler(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse,
 
     r.POST("/add", add.Create)
     r.GET("/pokemon", pokemon.Index)
+    r.GET("/pokemon/:id", pokemon.Show)
     r.POST("/pokemon", pokemon.Create)
 
     ginLambda = ginadapter.New(r)
