@@ -14,7 +14,7 @@ func Create(c *gin.Context) {
 
   newPokemon.ID = getUUID()
 
-  db := c.Keys["db"].(*dynamo.DB)
+  var db *dynamo.DB = c.Keys["db"].(*dynamo.DB)
   err2 := db.Table("Pokemon").Put(newPokemon).Run()
 
   if err1 != nil || err2 != nil{
