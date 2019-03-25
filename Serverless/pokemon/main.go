@@ -9,8 +9,8 @@ import (
   "serverWithState/resources/add"
   "serverWithState/resources/pokemon"
   "github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/guregu/dynamo"
+  "github.com/aws/aws-sdk-go/aws"
+  "github.com/guregu/dynamo"
 )
 
 var ginLambda *ginadapter.GinLambda
