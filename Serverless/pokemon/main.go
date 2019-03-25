@@ -6,8 +6,9 @@ import (
   "github.com/aws/aws-lambda-go/lambda"
   "github.com/awslabs/aws-lambda-go-api-proxy/gin"
   "github.com/gin-gonic/gin"
-  "serverWithState/resources/add"
-  "serverWithState/resources/pokemon"
+  "pokemon/resources/add"
+  "pokemon/resources/pokemon"
+  "pokemon/resources/user"
   "github.com/aws/aws-sdk-go/aws/session"
   "github.com/aws/aws-sdk-go/aws"
   "github.com/guregu/dynamo"
@@ -36,6 +37,7 @@ func Handler(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse,
     r.GET("/pokemon", pokemon.Index)
     r.GET("/pokemon/:id", pokemon.Show)
     r.POST("/pokemon", pokemon.Create)
+    r.POST("/user", user.Create)
 
     ginLambda = ginadapter.New(r)
   }
