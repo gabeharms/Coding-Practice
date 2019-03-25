@@ -32,12 +32,19 @@ func Handler(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse,
       c.Next()
     })
 
+    authMiddleware, _ := GenerateAuthMiddleware()
+
+
+    r.POST("/login", authMiddleware.LoginHandler)
+    r.POST("/user", user.Create)
 
     r.POST("/add", add.Create)
-    r.GET("/pokemon", pokemon.Index)
-    r.GET("/pokemon/:id", pokemon.Show)
-    r.POST("/pokemon", pokemon.Create)
-    r.POST("/user", user.Create)
+
+    authGroup := r.Group("auth")
+    authGroup.Use(authMiddleware.MiddlewareFunc())
+    authGroup.GET("/pokemon", pokemon.Index)
+    authGroup.GET("/pokemon/:id", pokemon.Show)
+    authGroup.POST("/pokemon", pokemon.Create)
 
     ginLambda = ginadapter.New(r)
   }
