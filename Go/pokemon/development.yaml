@@ -1,0 +1,4 @@
+aws:
+  region: us-east-1
+  credentials_file_path: /Users/gabeharms/.aws/credentials
+  credentials_name: default

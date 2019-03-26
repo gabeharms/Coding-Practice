@@ -2,7 +2,7 @@
 
 build:
 	dep ensure -v
-	env GOOS=linux go build -ldflags="-s -w" -o bin/app main.go auth.go
+	env GOOS=darwin GOARCH=386 go build -ldflags="-s -w" -o bin/app main.go auth.go config.go database.go
 
 clean:
 	rm -rf ./bin ./vendor Gopkg.lock

@@ -1,19 +1,20 @@
 package main
 
 import (
+  "flag"
   "github.com/gin-gonic/gin"
   "pokemon/resources/add"
   "pokemon/resources/pokemon"
   "pokemon/resources/user"
-  "github.com/guregu/dynamo"
-  "github.com/aws/aws-sdk-go/aws"
-  "github.com/aws/aws-sdk-go/aws/session"
 )
 
 func main() {
+  environment := flag.String("env", "development", "")
+  InitializeConfiguration(*environment)
+
   r := gin.Default()
 
-  db := dynamo.New(session.New(), &aws.Config{Region: aws.String("us-east-1")})
+  db := GetDatabaseClient()
 
   r.Use(func(c *gin.Context) {
     if c.Keys == nil {
