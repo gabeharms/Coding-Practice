@@ -1,6 +1,7 @@
 package main
 
 import (
+  "log"
   "time"
   "github.com/appleboy/gin-jwt"
   "github.com/gin-gonic/gin"
@@ -9,11 +10,11 @@ import (
 )
 
 type login struct {
-	Email string `form:"email" json:"email" binding:"required"`
-	Password string `form:"password" json:"password" binding:"required"`
+  Email string `form:"email" json:"email" binding:"required"`
+  Password string `form:"password" json:"password" binding:"required"`
 }
 
-var identityKey = "email"
+var identityKey = "id"
 
 func GenerateAuthMiddleware() (*jwt.GinJWTMiddleware, error) {
   return jwt.New(&jwt.GinJWTMiddleware{
@@ -22,7 +23,10 @@ func GenerateAuthMiddleware() (*jwt.GinJWTMiddleware, error) {
     MaxRefresh:  time.Hour,
     IdentityKey: identityKey,
     PayloadFunc: func(data interface{}) jwt.MapClaims {
-      if v, ok := data.(*user.User); ok {
+      log.Println("payload func")
+      log.Println(data)
+      log.Println(data.(user.User))
+      if v, ok := data.(user.User); ok {
         return jwt.MapClaims{
           identityKey: v.Email,
         }
@@ -31,8 +35,9 @@ func GenerateAuthMiddleware() (*jwt.GinJWTMiddleware, error) {
     },
     IdentityHandler: func(c *gin.Context) interface{} {
       claims := jwt.ExtractClaims(c)
+      log.Println(claims)
       return &user.User{
-        Email: claims["email"].(string),
+        Email: claims["id"].(string),
       }
     },
     Authenticator: func(c *gin.Context) (interface{}, error) {
@@ -54,7 +59,8 @@ func GenerateAuthMiddleware() (*jwt.GinJWTMiddleware, error) {
       return nil, jwt.ErrFailedAuthentication
     },
     Authorizator: func(data interface{}, c *gin.Context) bool {
-      if v, ok := data.(*user.User); ok && v.Email == "admin" {
+      if currentUser, ok := data.(*user.User); ok {
+        c.Keys["userID"] = currentUser.ID
         return true
       }
 
