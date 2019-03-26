@@ -10,7 +10,10 @@ func Index(c *gin.Context) {
   var db *dynamo.DB = c.Keys["db"].(*dynamo.DB)
   var allPokemon []Pokemon;
 
-  err := db.Table("Pokemon").Scan().All(&allPokemon)
+  err := db.Table("Pokemon").
+    Scan().
+    Filter("'UserID' = ?", c.Keys["userID"].(string)).
+    All(&allPokemon)
 
   if err != nil{
     c.JSON(400, gin.H{

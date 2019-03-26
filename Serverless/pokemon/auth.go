@@ -1,7 +1,6 @@
 package main
 
 import (
-  "log"
   "time"
   "github.com/appleboy/gin-jwt"
   "github.com/gin-gonic/gin"
@@ -23,21 +22,17 @@ func GenerateAuthMiddleware() (*jwt.GinJWTMiddleware, error) {
     MaxRefresh:  time.Hour,
     IdentityKey: identityKey,
     PayloadFunc: func(data interface{}) jwt.MapClaims {
-      log.Println("payload func")
-      log.Println(data)
-      log.Println(data.(user.User))
       if v, ok := data.(user.User); ok {
         return jwt.MapClaims{
-          identityKey: v.Email,
+          identityKey: v.ID,
         }
       }
       return jwt.MapClaims{}
     },
     IdentityHandler: func(c *gin.Context) interface{} {
       claims := jwt.ExtractClaims(c)
-      log.Println(claims)
       return &user.User{
-        Email: claims["id"].(string),
+        ID: claims["id"].(string),
       }
     },
     Authenticator: func(c *gin.Context) (interface{}, error) {

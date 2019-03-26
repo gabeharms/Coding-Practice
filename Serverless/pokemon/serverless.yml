@@ -18,6 +18,7 @@ provider:
          - "dynamodb:Scan"
          - "dynamodb:GetItem"
          - "dynamodb:PutItem"
+         - "dynamodb:Query"
        Resource: "arn:aws:dynamodb:us-east-1:066533940815:table/Pokemon"
 
     -  Effect: "Allow"

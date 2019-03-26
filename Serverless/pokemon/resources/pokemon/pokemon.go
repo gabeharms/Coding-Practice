@@ -6,6 +6,7 @@ import (
 )
 type Pokemon struct {
   ID       string `json:"id"`
+  UserID   string `json:"userId"`
   Type     string `json:"type"`
   Strength string `json:"strength"`
   Weakness string `json:"weakness"`

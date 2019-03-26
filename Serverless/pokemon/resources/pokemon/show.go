@@ -11,7 +11,10 @@ func Show(c *gin.Context) {
   var pokemon Pokemon;
   var id string = c.Param("id")
 
-  err := db.Table("Pokemon").Get("ID", id).One(&pokemon)
+  err := db.Table("Pokemon").
+    Get("ID", id).
+    Filter("'UserID' = ?", c.Keys["userID"].(string)).
+    One(&pokemon)
 
   if err != nil{
     c.JSON(400, gin.H{

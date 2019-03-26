@@ -1,6 +1,7 @@
 package pokemon
 
 import (
+  "log"
   "fmt"
   "net/http"
   "github.com/gin-gonic/gin"
@@ -13,6 +14,8 @@ func Create(c *gin.Context) {
   err1 := c.BindJSON(&newPokemon)
 
   newPokemon.ID = getUUID()
+  log.Println(c.Keys)
+  newPokemon.UserID = c.Keys["userID"].(string)
 
   var db *dynamo.DB = c.Keys["db"].(*dynamo.DB)
   err2 := db.Table("Pokemon").Put(newPokemon).Run()
