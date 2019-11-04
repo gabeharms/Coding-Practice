@@ -16,7 +16,7 @@
     "graphql-yoga": "^1.8.5",
     "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.5",
-    "mongoose": "^5.0.15",
+    "mongoose": "^5.7.5",
     "nodemon": "^1.17.5"
   },
   "devDependencies": {
