@@ -1,0 +1,66 @@
+<div id="status">Done</div>
+<div id="time">0ms</div>
+<button id="button">Run</div>
+
+<script>
+  document.querySelector('#status').style.background = 'green'
+  document.addEventListener('click', function (event) {
+    if (!event.target.matches('#button')) return;
+    event.preventDefault();
+    run()
+  }, false);
+  
+  function run() {
+    var lineItems = [
+      { id: 983, extendedAmount: '1000.0', lineItemTypeId: 674 },
+      { id: 992, extendedAmount: '1000.0', lineItemTypeId: 674 },
+      { id: 993, extendedAmount: '200.0', lineItemTypeId: 674 },
+      { id: 994, extendedAmount: '100.0', lineItemTypeId: 674 },
+      { id: 995, extendedAmount: '9000.0', lineItemTypeId: 1234 },
+    ];
+
+    var markups = [
+      {
+        compoundsMarkupsAbove: false,
+        id: 85,
+        lineItemTypeIds: [668, 669, 670, 671, 672, 673, 674],
+        markupSet: 'horizontal',
+        name: 'Fee (PC1)',
+        percentage: '15.0',
+        position: 1,
+        roundingPrecision: 2,
+      }, {
+        compoundsMarkupsAbove: false,
+        id: 71,
+        lineItemTypeIds: [668, 669, 670, 671, 672, 673, 674],
+        markupSet: 'vertical',
+        name: 'Fee (PC1)',
+        percentage: '-5.0',
+        position: 1,
+        roundingPrecision: 12,
+      }
+    ]
+
+    document.querySelector('#status').style.background = 'red'
+    document.querySelector('#status').innerText = 'Processing'
+
+    var start = new Date().getTime();
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", 'generateMarkupLineItems', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onreadystatechange = function() { 
+      if (xhr.readyState == 4) {
+        var end = new Date().getTime();
+        var time = end - start;
+        console.log('Execution time: ' + time);
+        document.querySelector('#status').style.background = 'green'
+        document.querySelector('#status').innerText = 'Done'
+        document.querySelector('#time').innerText = `${time}ms`
+      }
+    }
+    xhr.send(JSON.stringify({
+      lineItems: lineItems,
+      markups: markups
+    }));
+  }
+  </script>

@@ -1,0 +1,245 @@
+The C language provides no built-in facilities for performing such common operations as input/output,
+memory management, string manipulation, and the like. Instead, these facilities are defined in a
+standard library, which you compile and link with your programs.
+
+The GNU C Library, commonly known as glibc, is the GNU Project's implementation of the C standard
+library. Despite its name, it now also directly supports C++. It defines all of the library
+functions that are specified by the ISO C standard, as well as additional features specific to POSIX
+and other derivatives of the Unix operating system, and extensions specific to GNU systems.
+
+The GNU C Library project provides the core libraries for the GNU system and GNU/Linux systems, as
+well as many other systems that use Linux as the kernel. These libraries provide critical APIs
+including ISO C11, POSIX.1-2008, BSD, OS-specific APIs and more. These APIs include such
+foundational facilities as open, read, write, malloc, printf, getaddrinfo, dlopen, pthread_create,
+crypt, login, exit and more.
+
+The GNU C Library includes several header files, each of which provides definitions and declarations
+for a group of related facilities; this information is used by the C compiler when processing your
+program. For example, the header file stdio.h declares facilities for performing input and output,
+and the header file string.h declares string processing utilities. The organization of this manual
+generally follows the same division as the header files.
+
+The GNU C Library is compatible with the C standard adopted by the American National Standards
+Institute (ANSI): American National Standard X3.159-1989—“ANSI C” and later by the International
+Standardization Organization (ISO): ISO/IEC 9899:1990, “Programming languages—C”. We here refer to
+the standard as ISO C since this is the more general standard in respect of ratification.
+
+The GNU C Library is also compatible with the ISO POSIX family of standards, known more formally as
+the Portable Operating System Interface for Computer Environments (ISO/IEC 9945). They were also
+published as ANSI/IEEE Std 1003. POSIX is derived mostly from various versions of the Unix
+operating system.
+
+POSIX specifies additional features for ISO C functions, as well as specifying new additional
+functions. In general, the additional requirements and functionality defined by the POSIX standards
+are aimed at providing lower-level support for a particular kind of operating system environment,
+rather than general programming language support which can run in many diverse operating system
+environments.
+
+In order to use the facilities in the GNU C Library, you should be sure that your program source
+files include the appropriate header files. This is so that the compiler has declarations of these
+facilities available and can correctly process references to them. Once your program has been
+compiled, the linker resolves these references to the actual definitions provided in the archive
+file.
+
+gcc is the GNU Compiler Collection. It deals with turning source files into architecture-dependant
+assembly code.  It's the first step in compilation, and is typically the only user-invoked bit of
+the process (gcc typically deals with calling the assembler and linker automatically)
+
+The Standard C library is a set of C header files that provide core definitions and low-level
+functionality needed for non-trivial programs to operate.
+
+In otherwords: gcc -> c compiler and glibc -> C library.
+
+Let us look at the two interfaces: that between kernel and user space, and that between application
+code and system code. We have three layers, with libc between the kernel and the application code.
+
+
+Application programs and C library:
+
+The programmer who writes the canonical program
+
+  #include <stdio.h>
+  int main() {
+          printf("Hello world!\n");
+          return 0;
+  }
+
+programs for the libc interface. This C program calls the routine printf() that is part of the C
+library. A large part of the API (Application Program(ming) Interface) of the C library in a Unix
+environment is described by POSIX. The latest version of this standard is POSIX 1003.1-2001.
+
+From the viewpoint of the application programmer (and from the viewpoint of the POSIX standard)
+there is no distinction between library routines and system calls. Kernel and C library together
+provide the services described.
+
+Many things are handled by the C library itself - those are the things the user could have
+programmed himself, but need not since the author of the library did this job already. Maybe the
+presence of the library also saves some memory: many utilities can share common library code.
+
+But for the basic things, starting programs, allocating memory, file I/O etc., the C library invokes
+the kernel.
+
+
+
+Kernel and user space:
+
+The kernel provides certain services, and user space, that is, everything outside the kernel, both
+libraries and application programs, uses these. Programs in user space contain system calls that ask
+the kernel to do something, and the kernel does so, or returns an error code.
+
+Application programs do not usually contain direct system calls. Instead, they use library calls and
+the library uses system calls. But an application program can construct a system call "by hand". For
+example, in order to use the system call _llseek (to seek in a file larger than 4 GB when lseek does
+not support that), one can write
+
+  #include <linux/unistd.h>
+
+  _syscall5(int, _llseek, unsigned int, fd,
+            unsigned long, offset_high, unsigned long, offset_low,
+            long long *, result, unsigned int, origin)
+
+  long long
+  my_llseek(unsigned int fd, unsigned long long offset, unsigned int origin) {
+            long long result;
+            int retval;
+
+            retval = _llseek (fd, offset >> 32, offset & 0xffffffff,
+                              &result, origin);
+            return (retval == -1) ? -1 : result;
+  }
+
+This _syscall5 is a macro that expands to the definition of _llseek as system call, with a tiny
+wrapper to set errno if necessary and the routine my_llseek invokes this system call. Read the
+details in /usr/include/asm/unistd.h.
+
+Unfortunately, these _syscall macros were removed from the kernel in 2.6.20 so that bypassing libc
+has become much less convenient. One needs in-line assembly or a private file with copies of the
+old macros.
+
+An alternative is to use the syscall() call. It allows one to invoke system calls by number. See
+syscall(2). For example, syscall(__NR_getuid) is equivalent to getuid():
+
+  #include <stdio.h>
+  #include <unistd.h>
+  #include <sys/syscall.h>
+
+  int main() {
+          printf("%ld\n", syscall(__NR_getuid));
+          return 0;
+  }
+
+
+
+Alternative C libraries:
+
+The canonical C library under Linux is glibc.
+
+  % /lib/libc.so.6
+  GNU C Library stable release version 2.2.5, by Roland McGrath et al.
+  ...
+
+But several other C libraries exist. In ancient times we had libc4, a library still used by the
+Mastodon distribution. It uses the a.out format for binaries instead of the newer ELF format.
+
+glibc has been criticized as being "bloated" and slower than other libraries in the past. For this
+reason, several alternative C standard libraries have been created which emphasize a smaller
+footprint. However, many small-device projects use GNU libc over the smaller alternatives because
+of its application support, standards compliance, and completeness.
+
+In old times we had libc5. It is not much used anymore, but people sometimes like it because it is
+much smaller than glibc.
+
+But these days we have a handful of other small libc's: uClibc, dietlibc, newlib, klibc.
+
+All of the libraries uClibc, dietlibc and newlib are meant for embedded use. Especially uClibc is
+fairly complete. They are much smaller than glibc.
+
+There are also projects to recreate all standard utilities in a minimal form. See, for example
+busybox.
+
+
+
+Libraries and binary formats:
+
+The binary files one meets in daily life are object files, executables and libraries.
+
+Given the standard example hello.c, that contains something like
+
+  main() { printf("Hello!\n"); }
+
+one creates the object file hello.o by cc -c hello.c, or the executable hello by cc -o hello hello.c.
+Now this executable does not contain code for the printf() function. The command
+
+  % ldd hello
+          linux-gate.so.1 =>  (0xffffe000)
+          libc.so.6 => /lib/tls/libc.so.6 (0x40036000)
+          /lib/ld-linux.so.2 => /lib/ld-linux.so.2 (0x40000000)
+
+shows that this executable requires ld-linux.so.2 and libc.so.6 at run time. The former is a linker
+that will at startup time insert the address of the printf() routine (found in libc.so.6) into a
+table with function pointers.
+
+It is possible to produce complete executables, that do not require run-time linking by giving cc
+the -static flag: cc -static -o hello-static hello.c.
+
+  % ldd hello-static
+          not a dynamic executable
+
+  % ls -l hello* | sort -n +4
+  -rw-r--r--  1 aeb users      31 2004-10-16 13:40 hello.c
+  -rw-r--r--  1 aeb users     848 2004-10-16 13:40 hello.o
+  -rwxr-xr-x  1 aeb users    8647 2004-10-16 13:40 hello
+  -rwxr-xr-x  1 aeb users 2189142 2004-10-16 13:40 hello-static
+
+  % strip hello hello-static
+
+  % ls -l hello hello-static
+  -rwxr-xr-x  1 aeb users   2952 2004-10-16 13:41 hello
+  -rwxr-xr-x  1 aeb users 388108 2004-10-16 13:41 hello-static
+
+The strip utility removes the symbol table. Static executables are huge and usually needed only in
+emergency situations. For example, it is common to have a statically linked version sln of the ln
+utility, to set up links like /lib/libc.so.6 -> libc-2.3.2.so making the library name point at the
+actual library. It is also common to have a statically linked /sbin/init.
+
+
+
+Binary formats:
+Various binary formats exist, like a.out, COFF, and ELF. ELF is the modern format. Support for
+a.out is disappearing.
+
+The linux libc4 (like libc.so.4.6.27) libraries use the a.out format. In 1995 the big changeover to
+ELF happened. The new libraries are called libc5 (like libc.so.5.0.9). Around 1997/1998 libc5,
+maintained by HJLu, was replaced by libc6, also known as glibc2, maintained by Ulrich Drepper.
+
+The a.out format comes in several flavours, such as OMAGIC, NMAGIC, ZMAGIC, QMAGIC. The OMAGIC
+format is very compact, but program in this format cannot be swapped or demand paged because it has
+a non-page-aligned header. The ZMAGIC format has its .text section aligned to a 1024-byte boundary,
+allowing bmap(), provided the binary lives on a filesystem with 1024-byte blocks. It was superseded
+by the QMAGIC format, that has its .text section starting at offset 0 (so that it contains the header)
+but with the first page not mapped. The result is that QMAGIC binaries are 992 bytes smaller than
+ZMAGIC ones, and moreover allow one to trap dereference of NULL pointers.
+
+The binary format of an executable must be understood by the kernel when it handles an exec() call.
+There are kernel configuration options CONFIG_BINFMT_AOUT, CONFIG_BINFMT_MISC, CONFIG_BINFMT_ELF etc.
+Support for certain types of binaries can also be compiled as a module.
+
+The kernel has (in exec.c) a linked list formats and routines (un)register_binfmt() called by
+modules who want to announce that they support some binary format. The routine
+search_binary_handler() tries all of the registered modules, calling their load_binary() functions
+one by one until one returns success. If all fail, the first few bytes of the binary are used as a
+magic (decimal) number to request a module that was not loaded yet. For example, a ZMAGIC binary
+starts with the bytes 0b 01, giving octal 0413, decimal 267 and would cause the module binfmt-267
+to be requested. (Details depend on kernel version.)
+
+
+
+Shared and static libraries:
+
+Linking against a static library (with a name like foo.a) involves copying the code for the functions
+needed from that library at compile time. Linking against a dynamic library (with a name like foo.sa
+for a.out, or foo.so for ELF) involves finding references to the functions needed at compile time, so
+that these can be found in the right libraries at run time. (The files foo.sa are not the actual
+libraries, but contain values of global symbols and function addresses needed for run time linking.
+The actual library is probably called foo.so.1.2.3.) The utility ldd tells you what libraries a
+program needs.

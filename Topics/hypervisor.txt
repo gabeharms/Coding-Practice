@@ -1,0 +1,90 @@
+A hypervisor or virtual machine monitor (VMM) is computer software, firmware or hardware that creates
+and runs virtual machines. A computer on which a hypervisor runs one or more virtual machines is
+called a host machine, and each virtual machine is called a guest machine.
+
+The hypervisor presents the guest operating systems with a virtual operating platform and manages
+the execution of the guest operating systems. Multiple instances of a variety of operating systems
+may share the virtualized hardware resources: for example, Linux, Windows, and macOS instances can
+all run on a single physical x86 machine.
+
+This contrasts with operating-system-level virtualization, where all instances (usually called
+containers) must share a single kernel, though the guest operating systems can differ in user space,
+such as different Linux distributions with the same kernel.
+
+Hypervisors make it possible to use more of a system’s available resources and provide greater IT
+mobility since the guest VMs are independent of the host hardware. This means they can be easily
+moved between different servers.
+
+With a hypervisor, each virtual machine or operating system you have will be able to run its own
+programs, as it will appear that the system has the host hardware's processor, memory and resources.
+In reality, however, it is actually the hypervisor that is allocating those resources to the virtual
+machines.
+
+Now, hypervisors are fundamental components of any virtualization effort. You can think of it as the
+operating system for virtualized systems. It can access all physical devices residing on a server.
+It can also access the memory and disk. It can control all aspects and parts of a virtual machine.
+
+The term hypervisor is a variant of supervisor, a traditional term for the kernel of an operating
+system: the hypervisor is the supervisor of the supervisor, with hyper- used as a stronger variant
+of super.
+
+The servers would need to execute the hypervisor. The hypervisor, in turn, loads the client
+operating systems of the virtual machines. The hypervisor allocates the correct CPU resources,
+memory, bandwidth and disk storage space for each virtual machine.
+
+A virtual machine can create requests to the hypervisor through a variety of methods, including API calls
+
+Type-1, native or bare-metal hypervisors
+
+  * These hypervisors run directly on the host's hardware to control the hardware and to manage
+  guest operating systems. For this reason, they are sometimes called bare metal hypervisors. The
+  first hypervisors, which IBM developed in the 1960s, were native hypervisors. These included the
+  test software SIMMON and the CP/CMS operating system (the predecessor of IBM's z/VM).
+
+Type-2 or hosted hypervisors
+  * These hypervisors run on a conventional operating system (OS) just as other computer programs
+  do (Linux, Windows, FreeBSD). A guest operating system runs as a process on the host. Type-2 hypervisors abstract guest
+  operating systems from the host operating system. VMware Workstation, VMware Player, VirtualBox
+  are examples of type-2 hypervisors.
+
+So, native hypervisors run directly on the hardware in parallel to your OS,  while a hosted
+hypervisor needs your existing operating system to do its work. Which one is better? It depends on
+what you're after.
+
+Bare metal hypervisors are faster and more efficient as they do not need to go through the operating
+system and other layers that usually make hosted hypervisors slower. Type I hypervisors are also
+more secure than type II hypervisors.
+
+Hosted hypervisors, on the other hand, are much easier to set up than bare metal hypervisors because
+you have an OS to work with. These are also compatible with a broad range of hardware.
+
+The distinction between these two types is not always clear. For instance, Linux's Kernel-based
+Virtual Machine (KVM) and FreeBSD's bhyve are kernel modules that effectively convert the host
+operating system to a type-1 hypervisor. At the same time, since Linux distributions and FreeBSD are
+still general-purpose operating systems, with applications competing with each other for VM
+resources, KVM and bhyve can also be categorized as type-2 hypervisors.
+
+Several factors led to a resurgence around 2005 in the use of virtualization technology among
+Unix, Linux, and other Unix-like operating systems:[
+
+  * Expanding hardware capabilities, allowing each single machine to do more simultaneous work
+  * Efforts to control costs and to simplify management through consolidation of servers
+  * The need to control large multiprocessor and cluster installations, for example in server farms and render farms
+  * The improved security, reliability, and device independence possible from hypervisor architectures
+  * The ability to run complex, OS-dependent applications in different hardware or OS environments
+
+Starting in 2005, CPU vendors have added hardware virtualization assistance to their products, for
+example: Intel VT-x.
+
+
+A hypervisor is a natural target for hackers because its designed control all the resources of the
+hardware while managing all the virtual machines residing on it. The bad news is that a hypervisor
+is vulnerable to a lot of malicious code, especially those coming from a rogue virtual machine.
+
+Gartner's distinguished analyst, Neil MacDonald, writes that 35% of vulnerabilities found in server
+virtualization were related to the hypervisor. There are a lot of these types of attacks happening,
+but they are rarely highly publicized.
+
+MacDonald, however, suggests that you should treat your hypervisor as the most sensitive OS in your
+data center or network. You should know what vulnerabilities exist and make sure that you manage
+these, as well as the configurations, to make sure that it is secure.

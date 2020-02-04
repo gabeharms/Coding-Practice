@@ -1,0 +1,39 @@
+GNU is a Unix-like operating system. That means it is a collection of many programs: applications,
+libraries, developer tools, even games. The development of GNU, started in January 1984, is known
+as the GNU Project. Many of the programs in GNU are released under the auspices of the GNU Project;
+those we call GNU packages.
+
+The name “GNU” is a recursive acronym for “GNU's Not Unix.” “GNU” is pronounced g'noo, as one
+syllable, like saying “grew” but replacing the r with n. The name was chosen because GNU's design is
+Unix-like, but differs from Unix by being free software and containing no Unix code.
+
+An operating system consists of various fundamental programs which are needed by your computer so
+that it can communicate and receive instructions from users; read and write data to hard disks,
+tapes, and printers; control the use of memory; and run other software. The most important part of
+an operating system is the kernel. In a GNU/Linux system, Linux is the kernel component. The rest
+of the system consists of other programs, many of which were written by or for the GNU Project. Because
+the Linux kernel alone does not form a working operating system, we prefer to use the
+term “GNU/Linux” to refer to systems that many people casually refer to as “Linux”.
+
+The program in a Unix-like system that allocates machine resources and talks to the hardware is
+called the “kernel”. GNU is typically used with a kernel called Linux. This combination is the
+GNU/Linux operating system. GNU/Linux is used by millions, though many call it “Linux” by mistake.
+
+The primary and continuing goal of GNU is to offer a Unix-compatible system that would be 100%
+free software.
+
+GNU's own kernel, The Hurd, was started in 1990 (before Linux was started). Volunteers continue
+developing the Hurd because it is an interesting technical project.
+
+The common shell used to interact with Linux in a terminal is a GNU tool called BASH. To get BASH
+onto the computer in the first place it needs to be compiled so you also need a compiler and an
+assembler which are also GNU tools.
+
+In fact, GNU is responsible for a whole chain of tools which make it possible to develop programs
+and applications for Linux.
+
+So GNU is an operating system and Linux is a kernel. Both of them are based on UNIX. GNU has its
+own environment with the GNU OS and the GNU tools. Linux, on the other hand, is just a kernel and
+it uses GNU tools and software to interact with the kernel. When you are using bash on your Linux
+desktop, you are using GNU’s software which is compiled using GNU’s compilers to use for Linux
+kernel.

@@ -1,0 +1,75 @@
+Virtual memory is a memory management capability of an operating system (OS) that uses
+hardware and software to allow a computer to compensate for physical memory shortages
+by temporarily transferring data from random access memory (RAM) to disk storage.
+
+Virtual address space is increased using active memory in RAM and inactive memory in
+hard disk drives (HDDs) to form contiguous addresses that hold both the application and
+its data.
+
+Virtual memory was developed at a time when physical memory -- the installed RAM -- was
+expensive. Computers have a finite amount of RAM, so memory can run out, especially when
+multiple programs run at the same time. A system using virtual memory uses a section of
+the hard drive to emulate RAM. With virtual memory, a system can load larger programs or
+multiple programs running at the same time, allowing each one to operate as if it has
+infinite memory and without having to purchase more RAM.
+
+While copying virtual memory into physical memory, the OS divides memory into pagefiles
+or swap files with a fixed number of addresses. Each page is stored on a disk and when
+the page is needed, the OS copies it from the disk to main memory and translates the
+virtual addresses into real addresses.
+
+
+German physicist Fritz-Rudolf Güntsch is credited with developing the concept of virtual
+memory in 1956 as part of his doctoral work. In it he described a computer that used
+hardware to automatically move blocks of data between primary and secondary memory to
+avoid running out of main memory. This formed the basis for paging, a process in which
+memory is divided into sections and transferred between RAM and a hard drive to free up
+space in RAM. Paging began to show up in commercial computers in the early 1960s.
+
+In 1969, IBM researchers demonstrated that what was by then called a virtual memory overlay
+system worked better than the earlier manual systems. Mainframes and minicomputers in the
+1970s generally used virtual memory. Virtual memory technology was not included in early
+personal computers because developers thought running out of memory would not be a problem
+in those machines. That assumption proved incorrect. Intel introduced virtual memory in the
+protected mode of the 80286 processor in 1982 and paging support when the 80386 came out in 1985.
+
+
+A computer's memory management unit (MMU) handles memory operations, including managing virtual
+memory. In most computers, the MMU hardware is integrated into the CPU. There are two ways in
+which virtual memory is handled: paged and segmented.
+
+Paging divides memory into sections or paging files, usually approximately 4 KB in size. When a
+computer uses up its RAM, pages not in use are transferred to the section of the hard drive
+designated for virtual memory using a swap file. A swap file is a space set aside on the hard
+drive as the virtual memory extensions of the computer's RAM. When the swap file is needed, it's
+sent back to RAM using a process called page swapping. This system ensures that computer's OS
+and applications don't run out of real memory.
+
+The paging process includes the use of page tables, which translate the virtual addresses that
+the OS and applications use into the physical addresses that the MMU uses. Entries in the page
+table indicate whether or not the page is in real memory. If the OS or a program doesn't find
+what it needs in RAM, then the MMU responds to the missing memory reference with a page fault
+exception to get the OS to move the page back to memory when it's needed. Once the page is in
+RAM, its virtual address appears in the page table.
+
+Segmentation is also used to manage virtual memory. This approach divides virtual memory into
+segments of different lengths. Segments not in use in memory can be moved to virtual memory
+space on the hard drive. Segmented information or processes are tracked in a segment table,
+which shows if a segment is present in memory, whether it's been modified and what its physical
+address is.
+
+
+Some virtual memory systems combine segmentation and paging. In this case, memory gets divided into
+frames or pages. The segments take up multiple pages and the virtual address includes both the
+segment number and the page number.
+
+Among the primary benefits of virtual memory is its ability to handle twice as many addresses as main
+memory. It uses software to consume more memory by using the HDD as temporary storage while MMUs
+translate virtual memory addresses to physical addresses via the CPU. Programs use virtual addresses
+to store instructions and data; when a program is executed, the virtual addresses are converted into
+actual memory addresses.
+
+The use of virtual memory has its tradeoffs, particularly with speed. It's generally better to have
+as much physical memory as possible so programs work directly from RAM or physical memory. The use
+of virtual memory slows a computer because data must be mapped between virtual and physical memory,
+which requires extra hardware support for address translations.

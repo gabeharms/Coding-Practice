@@ -1,0 +1,52 @@
+In computer architecture, cache coherence is the uniformity of shared resource data that ends up stored in
+multiple local caches. When clients in a system maintain caches of a common memory resource, problems
+may arise with incoherent data, which is particularly the case with CPUs in a multiprocessing system.
+
+In a shared memory multiprocessor system with a separate cache memory for each processor, it is possible
+to have many copies of shared data: one copy in the main memory and one in the local cache of each
+processor that requested it. When one of the copies of data is changed, the other copies must reflect
+that change. Cache coherence is the discipline which ensures that the changes in the values of shared
+operands(data) are propagated throughout the system in a timely fashion.
+
+The following are the requirements for cache coherence:[2]
+
+  * Write Propagation
+    - Changes to the data in any cache must be propagated to other copies (of that cache line) in
+      the peer caches.
+  * Transaction Serialization
+    - Reads/Writes to a single memory location must be seen by all processors in the same order.
+
+Theoretically, coherence can be performed at the load/store granularity. However, in practice it is
+generally performed at the granularity of cache blocks
+
+The two most common mechanisms of ensuring coherency are snooping and directory-based, each having
+their own benefits and drawbacks. Snooping based protocols tend to be faster, if enough bandwidth is
+available, since all transactions are a request/response seen by all processors. The drawback is
+that snooping isn't scalable. Every request must be broadcast to all nodes in a system, meaning that
+as the system gets larger, the size of the (logical or physical) bus and the bandwidth it provides
+must grow. Directories, on the other hand, tend to have longer latencies (with a 3 hop
+request/forward/respond) but use much less bandwidth since messages are point to point and not
+broadcast. For this reason, many of the larger systems (>64 processors) use this type of cache
+coherence.
+
+
+Snooping:
+
+First introduced in 1983, snooping is a process where the individual caches monitor address lines
+for accesses to memory locations that they have cached.[4] The write-invalidate protocols and
+write-update protocols make use of this mechanism.
+
+For the snooping mechanism, a snoop filter reduces the snooping traffic by maintaining a plurality
+of entries, each representing a cache line that may be owned by one or more nodes. When replacement
+of one of the entries is required, the snoop filter selects for the replacement the entry
+representing the cache line or lines owned by the fewest nodes, as determined from a presence vector
+in each of the entries. A temporal or other type of algorithm is used to refine the selection if
+more than one cache line is owned by the fewest nodes.
+
+
+Directory-based:
+
+In a directory-based system, the data being shared is placed in a common directory that maintains
+the coherence between caches. The directory acts as a filter through which the processor must ask
+permission to load an entry from the primary memory to its cache. When an entry is changed, the
+directory either updates or invalidates the other caches with that entry.

@@ -1,0 +1,54 @@
+A Linux distribution (often abbreviated as distro) is an operating system made from a software
+collection, which is based upon the Linux kernel and, often, a package management system. Linux
+users usually obtain their operating system by downloading one of the Linux distributions, which
+are available for a wide variety of systems.
+
+A typical Linux distribution comprises a Linux kernel, GNU tools and libraries, additional
+software, documentation, a window system (the most common being the X Window System), a window
+manager, and a desktop environment. Most of the included software is free and open-source
+software made available both as compiled binaries and in source code form, allowing
+modifications to the original software. Usually, Linux distributions optionally include some
+proprietary software that may not be available in source code form, such as binary blobs
+required for some device drivers.
+
+Linus Torvalds developed the Linux kernel and distributed its first version, 0.01, in 1991.
+Linux was initially distributed as source code only, and later as a pair of downloadable floppy
+disk images – one bootable and containing the Linux kernel itself, and the other with a set of
+GNU utilities and tools for setting up a file system.
+
+Users were attracted to Linux distributions as alternatives to the DOS and Microsoft Windows
+operating systems on IBM PC compatible computers, Mac OS on the Apple Macintosh, and proprietary
+versions of Unix. Most early adopters were familiar with Unix from work or school. They embraced
+Linux distributions for their low (if any) cost, and availability of the source code for most
+or all of the software included.
+
+Originally, the distributions were simply a convenience, offering a free alternative to
+proprietary versions of Unix but later they became the usual choice even for Unix or Linux
+experts.
+
+Distributions are normally segmented into packages. Each package contains a specific application
+or service. The package is typically provided as compiled code, with installation and removal
+of packages handled by a package management system (PMS) rather than a simple file archiver. Each
+package intended for such a PMS contains meta-information such as a package description, version,
+and "dependencies". The package management system can evaluate this meta-information to allow
+package searches, to perform an automatic upgrade to a newer version, to check that all
+dependencies of a package are fulfilled, and/or to fulfill them automatically.
+
+
+Most widely used distributions:
+  * Debian
+    - Non commercial distribution and one the earliest
+    - Led to the Ubuntu distro
+  * Fedora
+    - community distribution sponsered by Red Hat. It aims at being the test bed for the 
+      Red Had commercial Linux offerings.
+    - Red Hat Enterprise Linux (RHEL), is a commercial derivative of Fedora
+    - CentOS, free distribution which is built from same sources as RHEL. Attemps to be 100% 
+      RHEL compatible
+    - Oracle Linux, derivative of RHEL and commercially supported by Oracle
+  * Darwin
+    - OSX is built on top of it. But uses its own proprietary XNU kernal
+    - Created by apple
+    - Open source 
+    - Built on top of FreeBSD Unix operating system
+  * Arch Linux

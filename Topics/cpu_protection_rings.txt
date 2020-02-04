@@ -1,0 +1,89 @@
+privilege levels, the mechanism whereby the OS and CPU conspire to restrict what user-mode programs
+can do. There are four privilege levels, numbered 0 (most privileged) to 3 (least privileged), and
+three main resources being protected: memory, I/O ports, and the ability to execute certain machine
+instructions. At any given time, an x86 CPU is running in a specific privilege level, which
+determines what code can and cannot do. These privilege levels are often described as protection
+rings, with the innermost ring corresponding to highest privilege.
+Most modern x86 kernels use only two privilege levels, 0 and 3:
+
+
+In general (not not specific to any architecture), rings provide a controlled way to access
+resources (data, hardware, etc.). A ring is a mode/state of the CPU. Depending on the CPU’s current
+ring level, certain instructions are either permitted or not. Likewise instructions may be permitted
+in the outer rings, but have limitations placed on their operands. If a prohibited instruction is
+executed, the CPU will trigger a fault and instead pass control to the kernel to deal with the
+problem (which the kernel will usually deal with by terminating the offending process)
+
+The operating system’s code generally runs in the inner-most ring, ring 0, which gives it complete,
+unfettered access to all resources. Device drivers may also operate in this ring. Userland code runs
+in a higher ring, and can request access to protected resources using defined access paths between
+the rings. If a userland program attempts to access a resource directly (using its memory address),
+a fault will be signaled and the access disallowed.
+
+About 15 machine instructions, out of dozens, are restricted by the CPU to ring zero. Many others
+have limitations on their operands. These instructions can subvert the protection mechanism or
+otherwise foment chaos if allowed in user mode, so they are reserved to the kernel. An attempt to
+run them outside of ring zero causes a general-protection exception, like when a program uses
+invalid memory addresses. Likewise, access to memory and I/O ports is restricted based on
+privilege level.
+
+The code segment register (cs) is, however, magical. First, its contents cannot be set directly by
+load instructions such as mov, but rather only by instructions that alter the flow of program
+execution, like call. Second, and importantly for us, instead of an RPL field that can be set by
+code, cs has a Current Privilege Level (CPL) field maintained by the CPU itself. This 2-bit CPL
+field in the code segment register is always equal to the CPU's current privilege level.
+
+Keep in mind that the CPU privilege level has nothing to do with operating system users. Whether
+you're root, Administrator, guest, or a regular user, it does not matter. All user code runs in
+ring 3 and all kernel code runs in ring 0, regardless of the OS user on whose behalf the code
+operates.
+
+Due to restricted access to memory and I/O ports, user mode can do almost nothing to the outside
+world without calling on the kernel. It can't open files, send network packets, print to the
+screen, or allocate memory. User processes run in a severely limited sandbox set up by the gods of
+ring zero. That's why it's impossible, by design, for a process to leak memory beyond its existence
+or leave open files after it exits. All of the data structures that control such things - memory,
+open files, etc - cannot be touched directly by user code; once a process finishes, the sandbox is
+torn down by the kernel.
+
+In truth, segment protection scarcely matters because modern kernels use a flat address space where
+the user-mode segments can reach the entire linear address space. Useful memory protection is done
+in the paging unit when a linear address is converted into a physical address. Each memory page is
+a block of bytes described by a page table entry containing two fields related to protection: a
+supervisor flag and a read/write flag. The supervisor flag is the primary x86 memory protection
+mechanism used by kernels. When it is on, the page cannot be accessed from ring 3. While the
+read/write flag isn't as important for enforcing privilege, it's still useful. When a process is
+loaded, pages storing binary images (code) are marked as read only, thereby catching some pointer
+errors if a program attempts to write to these pages.
+
+Finally, we need a way for the CPU to switch between privilege levels. If ring 3 code could transfer
+control to arbitrary spots in the kernel, it would be easy to subvert the operating system by
+jumping into the wrong (right?) places. A controlled transfer is necessary. This is accomplished
+via gate descriptors and via the sysenter instruction. A gate descriptor is a segment descriptor of
+type system, and comes in four sub-types: call-gate descriptor, interrupt-gate descriptor,
+trap-gate descriptor, and task-gate descriptor.
+
+Interrupt and trap gates, which are used to handle hardware interrupts (e.g., keyboard, timer,
+disks) and exceptions (e.g., page faults, divide by zero). These gate descriptors are stored in the
+Interrupt Descriptor Table (IDT). Each interrupt is assigned a number between 0 and 255 called a
+vector, which the processor uses as an index into the IDT when figuring out which gate descriptor to
+use when handling the interrupt. Interrupt and trap gates are nearly identical.
+
+An interrupt can never transfer control from a more-privileged to a less-privileged ring. Privilege
+must either stay the same (when the kernel itself is interrupted) or be elevated (when user-mode
+code is interrupted). In either case, the resulting CPL will be equal to to the DPL (descriptor
+privilege level) of the destination code segment; if the CPL changes, a stack switch also occurs.
+If an interrupt is triggered by code via an instruction like int n, one more check takes place: the
+gate DPL must be at the same or lower privilege as the CPL. This prevents user code from triggering
+random interrupts.  If these checks fail - you guessed it - a general-protection exception happens.
+
+Starting with the Pentium Pro, the sysenter instruction was introduced as a faster way to make
+system calls. It relies on special-purpose CPU registers that store the code segment, entry point,
+and other tidbits for the kernel system call handler. When sysenter is executed the CPU does no
+privilege checking, going immediately into CPL 0 and loading new values into the registers for code
+and stack (cs, eip, ss, and esp). Only ring zero can load the sysenter setup registers, which is
+done in enable_sep_cpu().
+
+Finally, when it's time to return to ring 3, the kernel issues an iret or sysexit instruction to
+return from interrupts and system calls, respectively, thus leaving ring 0 and resuming execution
+of user code with a CPL of 3.

@@ -1,0 +1,41 @@
+Virutal memory get's divided into two distinct areas:
+
+  * The user space, which is a set of locations where normal user processes run (i.e
+    everything other than the kernel). The role of the kernel is to manage applications running
+    in this space from messing with each other, and the machine.
+
+  * The kernel space, which is the location where the code of the kernel is stored, and
+    executes under.
+
+
+The kernel runs in the part of memory entitled to it. This part of memory cannot be accessed
+directly by the processes of the normal users, while as the kernel can access all parts of the
+memory. To access some part of the kernel, the user processes have to use the predefined system
+calls i.e. open, read, write etc. Also, the C library functions like printf call the system
+call write in turn.
+
+The system calls act as an interface between the user processes and the kernel processes.
+Processes running under the user space have access only to a limited part of memory, whereas
+the kernel has access to all of the memory. Processes running in user space also don't have
+access to the kernel space. User space processes can only access a small part of the kernel
+via an interface exposed by the kernel - the system calls.
+
+System calls are requests in a Unix-like operating system by an active process for a service
+performed by the kernel, such as input/output (I/O) or process creation. An active process is
+a process that is currently progressing in the CPU.
+
+If a process performs a system call, a software interrupt is sent to the kernel, which then
+dispatches the appropriate interrupt handler and continues its work after the handler has
+finished.
+
+So, when a system call occurs, a software interrupt is sent to the kernel. The CPU may hand
+over the control temporarily to the associated interrupt handler routine. The kernel process
+which was halted by the interrupt resumes after the interrupt handler routine finishes its job.
+
+Kernel space code has the property to run in "kernel mode", which (in your typical desktop
+-x86- computer) is what you call code that executes under ring 0. Typically in x86 architecture,
+there are 4 rings of protection. Ring 0 (kernel mode), Ring 1 (may be used by virtual machine
+hypervisors or drivers), Ring 2 (may be used by drivers). Ring 3 is what typical applications
+run under. It is the least privileged ring, and applications running on it have access to a
+subset of the processor's instructions. Ring 0 (kernel space) is the most privileged ring,
+and has access to all of the machine's instructions.

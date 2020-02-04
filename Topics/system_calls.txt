@@ -1,0 +1,812 @@
+As the name suggests, syscalls are system calls, and they're the way that you can make requests from
+user space into the Linux kernel. The kernel does some work for you, like creating a process, then
+hands control back to user space.
+
+System calls are how a program enters the kernel to perform some task. Programs use system calls to
+perform a variety of operations such as: creating processes, doing network and file IO, and much
+more.
+
+When you run a program which calls open, fork, read, write (and many others) you are making a system
+call.
+
+You can find a list of system calls by checking the man page for syscalls(2):
+http://man7.org/linux/man-pages/man2/syscalls.2.html
+
+
+Indirect System Calls:
+
+There are several different ways for user programs to make system calls and the low-level
+instructions for making a system call vary among CPU architectures.
+
+As an application developer, you don’t typically need to think about how exactly a system call is
+made. You simply include the appropriate header file (c language) and make the call as if it were a
+normal function. Thus, making a system call looks the same as invoking a normal library function.
+
+System calls are generally not invoked directly, but rather via wrapper functions in glibc (or
+perhaps some other library). glibc provides wrapper code which abstracts you away from the
+underlying code which arranges the arguments you’ve passed and enters the kernel. Often, but not
+always, the name of the wrapper function is the same as the name of the system call that it invokes.
+For example, glibc contains a function chdir() which invokes the underlying "chdir" system call.
+
+Often the glibc wrapper function is quite thin, doing little work other than copying arguments to
+the right registers before invoking the system call, and then setting errno appropriately after the
+system call has returned.
+
+There is a common mechanism for making all system calls transition into the kernel, which is handled
+by the libc library. Userspace code sets up some registers including an ID of the system call it
+wants to make and any parameters it needs to pass to the system call. It triggers a "trap" to
+transition control to the kernel.
+
+That's how userspace code makes requests of the kernel, but Linux also has pseudo filesystems that
+allow the kernel to communicate information to user space. The contents look like ordinary
+directories and files.
+
+The /proc directory is a great example. Look inside, and you'll find all sorts of interesting
+information about the processes running on a machine. In some cases, like cgroups (control groups),
+user space can configure parameters by writing into files under these pseudo filesystems.
+
+Many programmers working on normal applications may not feel that they're using syscalls very often.
+In practice, they are, because even everyday activities like making files or changing directories
+involve syscalls on Linux.
+
+
+Direct System Calls:
+
+syscall() is a small library function that invokes the system call whose assembly language interface
+has the specified number with the specified arguments.  Employing syscall() is useful, for example,
+when invoking a system call that has no wrapper function in the C library.
+
+syscall() saves CPU registers before making the system call, restores the registers upon return from
+the system call, and stores any error code returned by the system call in errno(3) if an error
+occurs.
+
+Symbolic constants for system call numbers can be found in the header file <sys/syscall.h>.
+
+Each architecture ABI has its own requirements on how system call arguments are passed to the kernel.
+For system calls that have a glibc wrapper (e.g., most system calls), glibc handles the details of
+copying arguments to the right registers in a manner suitable for the architecture.  However, when
+using syscall() to make a system call, the caller might need to handle architecture-dependent
+details; this requirement is most commonly encountered on certain 32-bit architectures.
+
+For example, on the ARM architecture Embedded ABI (EABI), a 64-bit value (e.g., long long) must be
+aligned to an even register pair.  Thus, using syscall() instead of the wrapper provided by glibc,
+the readahead() system call would be invoked as follows on the ARM architecture with the EABI in
+little endian mode:
+
+   syscall(SYS_readahead, fd, 0,
+           (unsigned int) (offset & 0xFFFFFFFF),
+           (unsigned int) (offset >> 32),
+           count);
+
+Since the offset argument is 64 bits, and the first argument (fd) is passed in r0, the caller must
+manually split and align the 64-bit value so that it is passed in the r2/r3 register pair.  That
+means inserting a dummy value into r1 (the second argument of 0).  Care also must be taken so that
+the split follows endian conventions (according to the C ABI for the platform).
+
+Every architecture has its own way of invoking and passing arguments to the kernel.
+
+The first table lists the instruction used to transition to kernel mode, the register used to
+indicate the system call number, the register(s) used to return the system call result, and the
+register used to signal an error.
+
+ Arch/ABI    Instruction           System  Ret  Ret  Error    Notes
+                                   call #  val  val2
+ ───────────────────────────────────────────────────────────────────
+ alpha       callsys               v0      v0   a4   a3       1, 6
+ arc         trap0                 r8      r0   -    -
+ arm/OABI    swi NR                -       a1   -    -        2
+ arm/EABI    swi 0x0               r7      r0   r1   -
+ arm64       svc #0                x8      x0   x1   -
+ blackfin    excpt 0x0             P0      R0   -    -
+ i386        int $0x80             eax     eax  edx  -
+ ia64        break 0x100000        r15     r8   r9   r10      1, 6
+ m68k        trap #0               d0      d0   -    -
+ microblaze  brki r14,8            r12     r3   -    -
+ mips        syscall               v0      v0   v1   a3       1, 6
+ nios2       trap                  r2      r2   -    r7
+ parisc      ble 0x100(%sr2, %r0)  r20     r28  -    -
+ powerpc     sc                    r0      r3   -    r0       1
+ riscv       scall                 a7      a0   a1   -
+ s390        svc 0                 r1      r2   r3   -        3
+ s390x       svc 0                 r1      r2   r3   -        3
+ superh      trap #0x17            r3      r0   r1   -        4, 6
+ sparc/32    t 0x10                g1      o0   o1   psr/csr  1, 6
+ sparc/64    t 0x6d                g1      o0   o1   psr/csr  1, 6
+ tile        swint1                R10     R00  -    R01      1
+ x86-64      syscall               rax     rax  rdx  -        5
+ x32         syscall               rax     rax  rdx  -        5
+
+The second table shows the registers used to pass the system call arguments.
+
+ Arch/ABI      arg1  arg2  arg3  arg4  arg5  arg6  arg7  Notes
+ ──────────────────────────────────────────────────────────────
+ alpha         a0    a1    a2    a3    a4    a5    -
+ arc           r0    r1    r2    r3    r4    r5    -
+ arm/OABI      a1    a2    a3    a4    v1    v2    v3
+ arm/EABI      r0    r1    r2    r3    r4    r5    r6
+ arm64         x0    x1    x2    x3    x4    x5    -
+ blackfin      R0    R1    R2    R3    R4    R5    -
+ i386          ebx   ecx   edx   esi   edi   ebp   -
+ ia64          out0  out1  out2  out3  out4  out5  -
+ m68k          d1    d2    d3    d4    d5    a0    -
+ microblaze    r5    r6    r7    r8    r9    r10   -
+ mips/o32      a0    a1    a2    a3    -     -     -     1
+ mips/n32,64   a0    a1    a2    a3    a4    a5    -
+ nios2         r4    r5    r6    r7    r8    r9    -
+ parisc        r26   r25   r24   r23   r22   r21   -
+ powerpc       r3    r4    r5    r6    r7    r8    r9
+ riscv         a0    a1    a2    a3    a4    a5    -
+ s390          r2    r3    r4    r5    r6    r7    -
+ s390x         r2    r3    r4    r5    r6    r7    -
+ superh        r4    r5    r6    r7    r0    r1    r2
+ sparc/32      o0    o1    o2    o3    o4    o5    -
+ sparc/64      o0    o1    o2    o3    o4    o5    -
+ tile          R00   R01   R02   R03   R04   R05   -
+ x86-64        rdi   rsi   rdx   r10   r8    r9    -
+ x32           rdi   rsi   rdx   r10   r8    r9    -
+
+
+
+
+
+
+User programs, the kernel, and CPU privilege levels:
+
+User programs (like your editor, terminal, ssh daemon, etc) need to interact with
+the Linux kernel so that the kernel can perform a set of operations on behalf of
+your user programs that they can’t perform themselves.
+
+For example, if a user program needs to do some sort of IO (open, read, write,
+etc) or modify its address space (mmap, sbrk, etc) it must trigger the kernel
+to run to complete those actions on its behalf.
+
+What prevents user programs from performing these actions themselves?
+
+It turns out that the x86-64 CPUs have a concept called privilege levels. Privilege
+levels are a complex topic but we can (greatly) simplify the concept of privilege
+levels by saying:
+
+* Privilege levels are a means of access control. The current privilege level
+  determines which CPU instructions and IO may be performed.
+* The kernel runs at the most privileged level, called “Ring 0”. User programs run
+  at a lesser level, typically “Ring 3”.
+
+In order for a user program to perform some privileged operation, it must cause
+a privilege level change (from “Ring 3” to “Ring 0”) so that the kernel can execute.
+
+There are several ways to cause a privilege level change and trigger the kernel
+to perform some action.
+
+Let’s start with a common way to cause the kernel to execute: interrupts.
+
+
+
+Interrupts:
+
+You can think of an interrupt as an event that is generated (or “raised”) by hardware
+or software.
+
+A hardware interrupt is raised by a hardware device to notify the kernel that a
+particular event has occurred. A common example of this type of interrupt is an
+interrupt generated when a NIC receives a packet.
+
+A software interrupt is raised by executing a piece of code. On x86-64 systems,
+a software interrupt can be raised by executing the int instruction.
+
+Interrupts usually have numbers assigned to them. Some of these interrupt numbers
+have a special meaning.
+
+You can imagine an array that lives in memory on the CPU. Each entry in this array
+maps to an interrupt number. Each entry contains the address of a function that
+the CPU will begin executing when that interrupt is received along with some options,
+like what privilege level the interrupt handler function should be executed in.
+
+Here’s a photo from the Intel CPU manual showing the layout of an entry in this array:
+
+
+Model Specific Registers (MSRs):
+
+Model Specific Registers (also known as MSRs) are control registers that have a
+specific purpose to control certain features of the CPU. The CPU documentation lists
+the addresses of each of the MSRs.
+
+You can use the CPU instructions rdmsr to wrmsr to read and write MSRs, respectively.
+Some of the system call methods we’ll see later make use of MSRs, as we’ll see soon.
+
+
+Calling system calls with assembly is a bad idea:
+
+It’s not a great idea to call system calls by writing your own assembly code.
+
+One big reason for this is that some system calls have additional code that runs
+in glibc before or after the system call runs.
+
+In the examples below, we’ll be using the exit system call. It turns out that you
+can register functions to run when exit is called by a program by using atexit.
+
+Those functions are called from glibc, not the kernel. So, if you write your own
+assembly to call exit as we show below, your registered handler functions won’t
+be executed since you are bypassing glibc.
+
+Nevertheless, manually making system calls with assembly is a good learning experience.
+
+
+
+Legacy system calls:
+
+Using our prerequisite knowledge we know two things:
+
+* We know that we can trigger the kernel to execute by generating a software
+  interrupt.
+* We can generate a software interrupt with the int assembly instruction.
+
+Combining these two concepts leads us to the legacy system call interface on Linux.
+
+The Linux kernel sets aside a specific software interrupt number that can be used
+by user space programs to enter the kernel and execute a system call.
+
+The Linux kernel registers an interrupt handler named ia32_syscall for the
+interrupt number: 128 (0x80). Let’s take a look at the code that actually
+does this.
+
+From the trap_init function in the kernel 3.13.0 source in arch/x86/kernel/traps.c:
+
+  void __init trap_init(void)
+  {
+          /* ..... other code ... */
+
+          set_system_intr_gate(IA32_SYSCALL_VECTOR, ia32_syscall);
+
+
+Where IA32_SYSCALL_VECTOR is a defined as 0x80 in arch/x86/include/asm/irq_vectors.h.
+
+But, if the kernel reserves a single software interrupt that userland programs can
+raise to trigger the kernel, how does the kernel know which of the many system
+calls it should execute?
+
+The userland program is expected to put the system call number in the eax register.
+The arguments for the syscall itself are to be placed in the remaining general
+purpose registers.
+
+One place this is documented is in a comment in arch/x86/ia32/ia32entry.S:
+
+ * Emulated IA32 system calls via int 0x80.
+ *
+ * Arguments:
+ * %eax System call number.
+ * %ebx Arg1
+ * %ecx Arg2
+ * %edx Arg3
+ * %esi Arg4
+ * %edi Arg5
+ * %ebp Arg6    [note: not saved in the stack frame, should not be touched]
+
+Now that we know how to make a system call and where the arguments should live,
+let’s try to make one by writing some inline assembly.
+
+
+
+Using legacy system calls with your own assembly:
+
+To make a legacy system call, you can write a small bit of inline assembly. While
+this is interesting from a learning perspective, I encourage readers to never
+make system calls by crafting their own assembly.
+
+In this example, we’ll try calling the exit system call, which takes a single
+argument: the exit status.
+
+First, we need to find the system call number for exit. The Linux kernel
+includes a file which lists each system call in a table. This file is processed
+by various scripts at build time to generate header files which can be used by
+user programs.
+
+Let’s look at the table found in arch/x86/syscalls/syscall_32.tbl:
+
+    1 i386  exit      sys_exit
+
+The exit syscall is number 1. According to the interface described above, we
+just need to move the syscall number into the eax register and the first
+argument (the exit status) into ebx.
+
+Here’s a piece of C code with some inline assembly that does this. Let’s set
+the exit status to “42”:
+
+    int
+    main(int argc, char *argv[])
+    {
+      unsigned int syscall_nr = 1;
+      int exit_status = 42;
+
+      asm ("movl %0, %%eax\n"
+                 "movl %1, %%ebx\n"
+           "int $0x80"
+        : /* output parameters, we aren't outputting anything, no none */
+          /* (none) */
+        : /* input parameters mapped to %0 and %1, repsectively */
+          "m" (syscall_nr), "m" (exit_status)
+        : /* registers that we are "clobbering", unneeded since we are calling exit */
+          "eax", "ebx");
+    }
+
+
+Next, compile, execute, and check the exit status:
+
+$ gcc -o test test.c
+$ ./test
+$ echo $?
+> 42
+
+Success! We called the exit system call using the legacy system call method
+by raising a software interrupt.
+
+
+
+
+Kernel-side: int $0x80 entry point
+
+So now that we’ve seen how to trigger a system call from a userland program,
+let’s see how the kernel uses the system call number to execute the system
+call code.
+
+Recall from the previous section that the kernel registered a syscall handler
+function called ia32_syscall.
+
+This function is implemented in assembly in arch/x86/ia32/ia32entry.S and we
+can see several things happening in this function, the most important of
+which is the call to the actual syscall itself:
+
+  ia32_do_call:
+          IA32_ARG_FIXUP
+          call *ia32_sys_call_table(,%rax,8) # xxx: rip relative
+
+IA32_ARG_FIXUP is a macro which rearranges the legacy arguments so that they
+may be properly understood by the current system call layer.
+
+The ia32_sys_call_table identifier refers to a table which is defined in
+arch/x86/ia32/syscall_ia32.c. Note the #include line toward the end of the code:
+
+    const sys_call_ptr_t ia32_sys_call_table[__NR_ia32_syscall_max+1] = {
+            /*
+             * Smells like a compiler bug -- it doesn't work
+             * when the & below is removed.
+             */
+            [0 ... __NR_ia32_syscall_max] = &compat_ni_syscall,
+    #include <asm/syscalls_32.h>
+    };
+
+Recall earlier we saw the syscall table defined in arch/x86/syscalls/syscall_32.tbl.
+
+There are a few scripts which run at compile time which take this table and generate
+the syscalls_32.h file from it. The generated header file is comprised of valid C
+code, which is simply inserted with the #include shown above to fill in
+ia32_sys_call_table with function addresses indexed by system call number.
+
+And this is how you enter the kernel via a legacy system call.
+
+
+
+Returning from a legacy system call with iret:
+
+We’ve seen how to enter the kernel with a software interrupt, but how does the
+kernel return back to the user program and drop the privilege level after it has
+finished running?
+
+If we turn to the (warning: large PDF) Intel Software Developer’s Manual we can
+find a helpful diagram that illustrates how the program stack will be arranged
+when a privilege level change occurs.
+
+When execution is transferred to the kernel function ia32_syscall via the
+execution of a software interrupt from a user program, a privilege level change
+occurs. The result is that the stack when ia32_syscall is entered will look
+like the diagram above.
+
+This means that the return address and the CPU flags which encode the privilege
+level (and other stuff), and more are all saved on the program stack before
+ia32_syscall executes.
+
+So, in order to resume execution the kernel just needs to copy these values from
+the program stack back into the registers where they belong and execution will
+resume back in userland.
+
+OK, so how do you do that?
+
+There’s a few ways to do that, but one of the easiest ways is to the use the
+iret instruction.
+
+The Intel instruction set manual explains that the iret instruction pops the
+return address and saved register values from the stack in the order they were
+prepared:
+
+  As with a real-address mode interrupt return, the IRET instruction pops the
+  return instruction pointer, return code segment selector, and EFLAGS image
+  from the stack to the EIP, CS, and EFLAGS registers, respectively, and then
+  resumes execution of the interrupted program or procedure.
+
+Finding this code in the Linux kernel is a bit difficult as it is hidden
+beneath several macros and there is extensive care taken to deal with things
+like signals and ptrace system call exit tracking.
+
+Eventually all the macros in the assembly stubs in the kernel reveal the iret
+which returns from a system call back to a user program.
+
+From irq_return in arch/x86/kernel/entry_64.S:
+
+irq_return:
+  INTERRUPT_RETURN
+Where INTERRUPT_RETURN is defined in arch/x86/include/asm/irqflags.h as iretq.
+
+Fast system calls
+
+The legacy method seems pretty reasonable, but there are newer ways to trigger
+a system call which don’t involve a software interrupt and are much faster tha
+n using a software interrupt.
+
+Each of the two faster methods is comprised of two instructions. One to enter
+the kernel and one to leave. Both methods are described in the Intel CPU
+documentation as “Fast System Call”.
+
+
+32-bit fast system calls:
+
+sysenter/sysexit
+
+Using sysenter to make a system call is more complicated than using the legacy
+interrupt method and involves more coordination between the user program
+(via glibc) and the kernel.
+
+Let’s take it one step at a time and sort out the details. First, let’s see
+what the documentation in the Intel Instruction Set Reference says about the
+sysenter and how to use it.
+
+
+Let’s take a look:
+
+  Prior to executing the SYSENTER instruction, software must specify the privilege
+  level 0 code segment and code entry point, and the privilege level 0 stack
+  segment and stack pointer by writing values to the following MSRs:
+
+    • IA32_SYSENTER_CS (MSR address 174H) — The lower 16 bits of this MSR are the
+      segment selector for the privilege level 0 code segment. This value is also
+      used to determine the segment selector of the privilege level 0 stack segment.
+      This value cannot indicate a null selector.
+    • IA32_SYSENTER_EIP (MSR address 176H) — The value of this MSR is loaded into
+      RIP. In protected mode, only bits 31:0 are loaded.
+    • IA32_SYSENTER_ESP (MSR address 175H) — The value of this MSR is loaded into RSP
+      (thus, this value contains the stack pointer for the privilege level 0 stack).
+      This value cannot represent a non-canonical address. In protected mode, only bits
+      31:0 are loaded.
+
+In other words: in order for the kernel to receive incoming system calls with sysenter,
+the kernel must set 3 Model Specific Registers (MSRs). The most interesting MSR in our
+case is IA32_SYSENTER_EIP (which has the address 0x176). This MSR is where the kernel
+should specify the address of the function that will execute when a sysenter instruction
+is executed by a user program.
+
+Much like the legacy software interrupt syscalls, there is a defined convention for
+making system calls with sysenter.
+
+One place this is documented is in a comment in arch/x86/ia32/ia32entry.S:
+
+   * 32bit SYSENTER instruction entry.
+   *
+   * Arguments:
+   * %eax System call number.
+   * %ebx Arg1
+   * %ecx Arg2
+   * %edx Arg3
+   * %esi Arg4
+   * %edi Arg5
+   * %ebp user stack
+   * 0(%ebp) Arg6
+
+
+Recall that the legacy system call method includes a mechanism for returning back to the
+userland program which was interrupted: the iret instruction.
+
+Capturing the logic needed to make sysenter work properly is complicated because unlike
+software interrupts, sysenter does not store the return address.
+
+How, exactly, the kernel does this and other bookkeeping prior to executing a sysenter
+instruction can change over time (and it has changed, as you will see in the Bugs section below).
+
+In order to protect against future changes, user programs are intended to use a function
+called __kernel_vsyscall which is implemented in the kernel, but mapped into each user
+process when the process is started.
+
+This is a bit odd; it’s code that comes with the kernel, but runs in userland.
+
+It turns out that __kernel_vsyscall is part of something called a virtual Dynamic
+Shared Object (vDSO) which exists to allow programs to execute kernel code in userland.
+
+
+Using sysenter system calls with your own assembly:
+
+Keeping with our legacy system call example from earlier, we’ll call exit with an exit
+status of 42.
+
+The exit syscall is number 1. According to the interface described above, we just need to
+move the syscall number into the eax register and the first argument (the exit status) into ebx.
+
+    #include <stdlib.h>
+    #include <elf.h>
+
+    int
+    main(int argc, char* argv[], char* envp[])
+    {
+      unsigned int syscall_nr = 1;
+      int exit_status = 42;
+      Elf32_auxv_t *auxv;
+
+      /* auxilliary vectors are located after the end of the environment
+       * variables
+       *
+       * check this helpful diagram: https://static.lwn.net/images/2012/auxvec.png
+       */
+      while(*envp++ != NULL);
+
+      /* envp is now pointed at the auxilliary vectors, since we've iterated
+       * through the environment variables.
+       */
+      for (auxv = (Elf32_auxv_t *)envp; auxv->a_type != AT_NULL; auxv++)
+      {
+        if( auxv->a_type == AT_SYSINFO) {
+          break;
+        }
+      }
+
+      /* NOTE: in glibc 2.16 and higher you can replace the above code with
+       * a call to getauxval(3):  getauxval(AT_SYSINFO)
+       */
+
+      asm(
+          "movl %0,  %%eax    \n"
+          "movl %1, %%ebx    \n"
+          "call *%2          \n"
+          : /* output parameters, we aren't outputting anything, no none */
+            /* (none) */
+          : /* input parameters mapped to %0 and %1, repsectively */
+            "m" (syscall_nr), "m" (exit_status), "m" (auxv->a_un.a_val)
+          : /* registers that we are "clobbering", unneeded since we are calling exit */
+            "eax", "ebx");
+    }
+
+Next, compile, execute, and check the exit status:
+
+$ gcc -m32 -o test test.c
+$ ./test
+$ echo $?
+> 42
+
+Success! We called the exit system call using the legacy sysenter method without
+raising a software interrupt.
+
+
+
+Kernel-side: sysenter entry point
+
+So now that we’ve seen how to trigger a system call from a userland program with
+sysenter via __kernel_vsyscall, let’s see how the kernel uses the system call
+number to execute the system call code.
+
+Recall from the previous section that the kernel registered a syscall handler
+function called ia32_sysenter_target.
+
+This function is implemented in assembly in arch/x86/ia32/ia32entry.S. Let’s take
+a look at where the value in the eax register is used to execute the system call:
+
+  sysenter_dispatch:
+          call    *ia32_sys_call_table(,%rax,8)
+
+This is identical code as we saw in the legacy system call mode: a table named
+ia32_sys_call_table which is indexed into with the system call number.
+
+After all the needed bookkeeping is done both the legacy system call model and
+the sysenter system call model use the same mechanism and system call table for
+dispatching system calls.
+
+Refer to the int $0x80 entry point section to learn where the ia32_sys_call_table
+is defined and how it is constructed.
+
+And this is how you enter the kernel via a sysenter system call.
+
+
+
+Returning from a sysenter system call with sysexit:
+
+The kernel can use the sysexit instruction to resume execution back to the user
+program.
+
+Using this instruction is not as straight forward as using iret. The caller is
+expected to put the address to return to into the rdx register, and to put the
+pointer to the program stack to use in the rcx register.
+
+This means that your software must compute the address where execution should
+be resumed, preserve that value, and restore it prior to calling sysexit.
+
+We can find the code which does this in: arch/x86/ia32/ia32entry.S:
+
+  sysexit_from_sys_call:
+          andl    $~TS_COMPAT,TI_status+THREAD_INFO(%rsp,RIP-ARGOFFSET)
+          /* clear IF, that popfq doesn't enable interrupts early */
+          andl  $~0x200,EFLAGS-R11(%rsp)
+          movl    RIP-R11(%rsp),%edx              /* User %eip */
+          CFI_REGISTER rip,rdx
+          RESTORE_ARGS 0,24,0,0,0,0
+          xorq    %r8,%r8
+          xorq    %r9,%r9
+          xorq    %r10,%r10
+          xorq    %r11,%r11
+          popfq_cfi
+          /*CFI_RESTORE rflags*/
+          popq_cfi %rcx                           /* User %esp */
+          CFI_REGISTER rsp,rcx
+          TRACE_IRQS_ON
+          ENABLE_INTERRUPTS_SYSEXIT32
+
+ENABLE_INTERRUPTS_SYSEXIT32 is a macro which is defined in
+arch/x86/include/asm/irqflags.h which contains the sysexit instruction.
+
+And now you know how 32-bit fast system calls work.
+
+
+
+
+Calling a syscall semi-manually with syscall(2):
+
+Great, we’ve seen how to call system calls manually by crafting assembly for a
+few different system call methods.
+
+Usually, you don’t need to write your own assembly. Wrapper functions are provided
+by glibc that handle all of the assembly code for you.
+
+There are some system calls, however, for which no glibc wrapper exists. One example
+of a system call like this is futex, the fast userspace locking system call.
+
+But, wait, why does no system call wrapper exist for futex?
+
+futex is intended only to be called by libraries, not application code, and thus
+in order to call futex you must do it by:
+
+  * Generating assembly stubs for every platform you want to support
+  * OR use the syscall wrapper provided by glibc
+
+If you find yourself in the situation of needing to call a system call for which no
+wrapper exists, you should definitely choose option 2: use the function syscall from glibc.
+
+Let’s use syscall from glibc to call exit with exit status of 42:
+
+  #include <unistd.h>
+
+  int
+  main(int argc, char *argv[])
+  {
+    unsigned long syscall_nr = 60;
+    long exit_status = 42;
+
+    syscall(syscall_nr, exit_status);
+  }
+
+Next, compile, execute, and check the exit status:
+
+$ gcc -o test test.c
+$ ./test
+$ echo $?
+> 42
+
+Success! We called the exit system call using the syscall wrapper from glibc.
+
+
+glibc syscall wrapper internals:
+
+Let’s take a look at the syscall wrapper function we used in the previous example
+to see how it works in glibc.
+
+From sysdeps/unix/sysv/linux/x86_64/syscall.S:
+
+    /* Usage: long syscall (syscall_number, arg1, arg2, arg3, arg4, arg5, arg6)
+       We need to do some arg shifting, the syscall_number will be in
+       rax.  */
+
+            .text
+    ENTRY (syscall)
+            movq %rdi, %rax         /* Syscall number -> rax.  */
+            movq %rsi, %rdi         /* shift arg1 - arg5.  */
+            movq %rdx, %rsi
+            movq %rcx, %rdx
+            movq %r8, %r10
+            movq %r9, %r8
+            movq 8(%rsp),%r9        /* arg6 is on the stack.  */
+            syscall                 /* Do the system call.  */
+            cmpq $-4095, %rax       /* Check %rax for error.  */
+            jae SYSCALL_ERROR_LABEL /* Jump to error handler if error.  */
+    L(pseudo_end):
+            ret                     /* Return to caller.  */
+
+Earlier we showed an excerpt from the x86_64 ABI document that describes both
+userland and kernel calling conventions.
+
+This assembly stub is cool because it shows both calling conventions. The arguments
+passed into this function follow the userland calling convention, but are then
+moved to a different set of registers to obey the kernel calling convention prior
+to entering the kernel with syscall.
+
+This is how the glibc syscall wrapper works when you use it to call system calls
+that do not come with a wrapper by default.
+
+
+
+Virtual system calls:
+
+We’ve now covered all the methods of making a system call by entering the kernel and
+shown how you can make those calls manually (or semi-manually) to transition the system
+from userland to the kernel.
+
+What if programs could call certain system calls without entering the kernel at all?
+
+That’s precisely why the Linux virtual Dynamic Shared Object (vDSO) exists. The Linux
+vDSO is a set of code that is part of the kernel, but is mapped into the address space
+of a user program to be run in userland.
+
+The idea is that some system calls can be used without entering the kernel. One such
+call is: gettimeofday.
+
+Programs calling the gettimeofday system call do not actually enter the kernel. They
+instead make a simple function call to a piece of code that was provided by the kernel,
+but is run in userland.
+
+No software interrupt is raised, no complicated sysenter or syscall bookkeeping is
+required. gettimeofday is just a normal function call.
+
+You can see the vDSO listed as the first entry when you use ldd:
+
+$ ldd `which bash`
+  linux-vdso.so.1 =>  (0x00007fff667ff000)
+  libtinfo.so.5 => /lib/x86_64-linux-gnu/libtinfo.so.5 (0x00007f623df7d000)
+  libdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 (0x00007f623dd79000)
+  libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f623d9ba000)
+  /lib64/ld-linux-x86-64.so.2 (0x00007f623e1ae000)
+
+
+Let’s see how the vDSO is setup in the kernel.
+
+
+
+glibc system call wrappers:
+
+While we’re talking about system calls ;) it makes sense to briefly mention how glibc
+deals with system calls.
+
+For many system calls, glibc simply needs a wrapper function where it moves arguments
+into the proper registers and then executes the syscall or int $0x80 instructions, or
+calls __kernel_vsyscall.
+
+It does this by using a series of tables defined in text files that are processed with
+scripts and output C code.
+
+For example, the sysdeps/unix/syscalls.list file describes some common system calls:
+
+access          -       access          i:si    __access        access
+acct            -       acct            i:S     acct
+chdir           -       chdir           i:s     __chdir         chdir
+chmod           -       chmod           i:si    __chmod         chmod
+
+To learn more about each column, check the comments in the script which processes this
+file: sysdeps/unix/make-syscalls.sh.
+
+More complex system calls, like exit which invokes handlers have actual implementations
+in C or assembly code and will not be found in a templated text file like this.
+
+
+Conclusion:
+
+The system call infrastructure in the Linux kernel is incredibly complex. There are
+many different methods for making system calls each with their own advantages and
+disadvantages.
+
+Calling system calls by crafting your own assembly is generally a bad idea as the ABI may
+break underneath you. Your kernel and libc implementation will (probably) choose the
+fastest method for making system calls on your system.
+
+If you can’t use the glibc provided wrappers (or if one doesn’t exist), you should at 
+the very least use the syscall wrapper function, or try to go through the vDSO 
+provided __kernel_vsyscall.

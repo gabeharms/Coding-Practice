@@ -1,0 +1,112 @@
+The Portable Operating System Interface (POSIX) is a family of standards specified by the IEEE
+Computer Society for maintaining compatibility between operating systems. POSIX defines the
+application programming interface (API), along with command line shells and utility interfaces, for
+software compatibility with variants of Unix and other operating systems.
+
+Unix was selected as the basis for a standard system interface partly because it was
+"manufacturer-neutral". However, several major versions of Unix existed—so there was a need to
+develop a common denominator system. The POSIX specifications for Unix-like operating systems
+originally consisted of a single document for the core programming interface, but eventually grew to
+19 separate documents.
+
+The standardized user command line and scripting interface were based on the UNIX System V shell.
+Many user-level programs, services, and utilities (including awk, echo, ed) were also standardized,
+along with required program-level services (including basic I/O: file, terminal, and network). POSIX
+also defines a standard threading library API which is supported by most modern operating systems.
+In 2008, most parts of POSIX were combined into a single standard (IEEE Std 1003.1-2008, also known
+as POSIX.1-2008).
+
+Cygwin provides a largely POSIX-compliant development and run-time environment for Microsoft Windows.
+
+
+When you write your programs to rely on POSIX standards, you can be pretty sure to be able to port
+them easily among a large family of Unix derivatives (including Linux, but not limited to it!); if
+and when you use some Linux API that's not standardized as part of Posix, you will have a harder
+time if and when you want to port that program or library to other Unix-y systems (e.g., MacOSX) in
+the future.
+
+
+The most important things POSIX 7 defines
+
+  C API
+    * Greatly extends ANSI C with things like:
+      - more file operations: mkdir, dirname, symlink, readlink, link (hardlinks), poll(), stat,
+        sync, nftw()
+      - process and threads: fork, execl, wait, pipe, semaphors sem_*, shared memory (shm_*), kill,
+        scheduling parameters (nice, sched_*), sleep, mkfifo, setpgid()
+      - networking: socket()
+      - memory management: mmap, mlock, mprotect, madvise, brk()
+      - utilities: regular expressions (reg*)
+
+      Those APIs also determine underlying system concepts on which they depend, e.g. fork requires
+      a concept of a process.
+
+      Many Linux system calls exist to implement a specific POSIX C API function and make Linux
+      compliant, e.g. sys_write, sys_read, ... Many of those syscalls also have Linux-specific
+      extensions however.
+
+      Major Linux desktop implementation: glibc, which in many cases just provides a shallow wrapper
+      to system calls.
+
+  CLI utilities
+    * E.g.: cd, ls, echo, ...
+
+      Many utilities are direct shell front ends for a corresponding C API function, e.g. mkdir.
+
+      Major Linux desktop implementation: GNU Coreutils for the small ones, separate GNU projects
+      for the big ones: sed, grep, awk, ... Some CLI utilities are implemented by Bash as built-ins.
+
+  Shell language
+    * E.g., a=b; echo "$a"
+
+      Major Linux desktop implementation: GNU Bash.
+
+  Environment variables
+    * E.g.: HOME, PATH.
+
+  Program exit status
+    * ANSI C says 0 or EXIT_SUCCESS for success, EXIT_FAILURE for failure, and leaves the rest
+      implementation defined.
+
+      POSIX adds:
+        - 126: command found but not executable.
+        - 127: command not found.
+        - 128: terminated by a signal.
+
+
+  Regular expression
+
+    There are two types: BRE (Basic) and ERE (Extended). Basic is deprecated and only kept to not
+    break APIs.
+
+    Those are implemented by C API functions, and used throughout CLI utilities, e.g. grep accepts
+    BREs by default, and EREs with -E.
+
+    Major Linux implementation: glibc implements the functions under regex.h which programs like
+    grep can use as backend.
+
+  Directory struture
+    * E.g.: /dev/null, /tmp
+
+  Filenames
+    * / is the path separator
+    * NUL cannot be used
+    * . is cwd, .. parent
+    * portable filenames
+
+  Command line utility API conventions
+
+
+Many systems follow POSIX closely, but few are actually certified by the Open Group which maintains the standard. Notable certified ones include:
+  * OS X (Apple) X stands for both 10 and UNIX. Was the first Apple POSIX system, released circa 2001. See also: Is OSX a POSIX OS?
+  * AIX (IBM)
+  * HP-UX (HP)
+  * Solaris (Oracle)
+
+Most Linux distros are very compliant, but not certified because they don't want to pay the compliance check.
+
+
+
+
+Basically it was a set of measures to ease the pain of development and usage of different flavours
+of UNIX by having a (mostly) common API and utilities.

@@ -1,0 +1,31 @@
+OS X is the platform, Darwin is the operating system, and XNU is the kernel. Darwin and XNU are open
+source software, but the frameworks that make up the OS X platform on top of Darwin, are not.
+
+OS X is built atop Darwin and provides a collection of frameworks and services that implement the 
+user interface and main application libraries.
+
+Darwin is an open-source Unix-like operating system first released by Apple Inc. in 2000. It is
+composed of code developed by Apple, as well as code derived from NeXTSTEP, BSD, Mach, and other
+free software projects. Darwin is not a complete version of OSX, notably lacking the UI layer, and 
+all of the Apple applications.
+
+Darwin is based on the FreeBSD UNIX operating system, which differs slightly from GNU linux, so the
+syntax of some of the commands is different. Ubuntu uses the Debian package manager to handle 
+software installation and management, whereas Darwin has no default package manager.
+
+The kernel of Darwin is XNU.
+
+XNU is the computer operating system kernel developed at Apple Inc. since December 1996 for use in
+the macOS operating system and released as free and open-source software as part of the Darwin
+operating system. It is also used as the kernel for the iOS, tvOS, and watchOS operating systems.
+XNU is an abbreviation of X is Not Unix. Namely, the XNU kernel is the core piece of software that 
+provides resource management, hardware abstraction, and scheduling.
+
+The XNU kernel used on OS X includes a few subsystems from (older versions of) FreeBSD, but is
+mostly an independent implementation. The kernel, along with other core parts of OS X are
+collectively referred to as Darwin. Darwin is a complete operating system based on many of the same
+technologies that underlie OS X.
+
+At macOS's core is a POSIX compliant operating system built on top of the XNU kernel, with standard
+Unix facilities available from the command line interface. Apple has released this family of
+software as a free and open source operating system named Darwin.
