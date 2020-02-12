@@ -115,8 +115,11 @@ class NeuralNetwork:
         dW2 = (1 / m) * np.dot(dy, np.transpose(self.layer1)) # sigmoid derivative
         db2 = (1 / m) * np.sum(dy, axis=1, keepdims=True)
 
+    
         dZ1 = np.dot(np.transpose(self.weights2), dy) * (1-np.power(self.layer1, 2)) # tan derivative
         dW1 = (1 / m) * np.dot(dZ1, np.transpose(self.input))
+        print(dZ1)
+        print(dW1)
         db1 = (1 / m) * np.sum(dZ1, axis=1, keepdims=True)
 
         # update the weights with the derivative (slope) of the loss function
@@ -152,4 +155,4 @@ y = np.array([0, 1, 1, 0])
 
 model = NeuralNetwork(x, y)
 
-model.fit(10000)
+model.fit(1)

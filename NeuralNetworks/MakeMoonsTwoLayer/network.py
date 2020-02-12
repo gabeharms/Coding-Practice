@@ -50,6 +50,8 @@ def setParameters(X, Y, hidden_size):
   np.random.seed(3)
   input_size = X.shape[0] # number of neurons in input layer
   output_size = Y.shape[0] # number of neurons in output layer.
+  print(input_size)
+  print(X)
   W1 = np.random.randn(hidden_size, input_size)*np.sqrt(2/input_size)
   b1 = np.zeros((hidden_size, 1))
   W2 = np.random.randn(output_size, hidden_size)*np.sqrt(2/hidden_size)
