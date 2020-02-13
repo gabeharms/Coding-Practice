@@ -12,17 +12,10 @@ class BackwardPropagator:
                 activation_prime = self.__tanh_prime
                 layer_weights = parameters.get_weights(i)
                 layer_plus_one_weights = parameters.get_weights(i+1)
-                print(layer_weights)
-                print(layer_weights.shape[1])
-                print(layer_weights.shape[0])
-                print(layer_plus_one_weights)
-                print(layer_plus_one_weights.shape[1])
-                print(layer_plus_one_weights.shape[0])
                 for j in range(4): # range(layer_plus_one_weights.shape[1]):
                     error = 0.0
                     for neuron in range(1): #range(layer_plus_one_weights.shape[0]):
                         error += (layer_plus_one_weights[neuron][j] * network[i][neuron][j])
-                    print("adding to errors: %s" % error)
                     errors.append(error)
             else:
                 activation_prime = self.__sigmoid_prime
@@ -31,11 +24,7 @@ class BackwardPropagator:
                     errors.append(training_output[j] - layer_output[0][j])
 
             layer_output = forward_propagation_result.get_A(i)
-            print("entire layer output: %s" % layer_output)
             for j in range(parameters.get_weights(i).shape[0]):
-                print("------------------------------------------")
-                print("------------------------------------------")
-                print("layer %d, neuron %d, error: %s, layer_output: %s, activation_prime: %s gradient for neuron: %s" % (i, j, errors[j], layer_output[j], activation_prime(layer_output[j]), errors[j] * activation_prime(layer_output[j])))
                 network[i-1].insert(j, errors[j] * activation_prime(layer_output[j]))
 
         return {"dWs": network, "dbs": []}
