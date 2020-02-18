@@ -17,11 +17,14 @@ import matplotlib.pyplot as plt
 
 class NeuralNetwork:
     def __init__(self, x, y):
+        np.random.seed(2)
         hidden_layer_size = 4
         self.input      = x
         self.weights1   = np.random.rand(hidden_layer_size, self.input.shape[0])  # means hidden layer has 4 neurons
+        print(self.weights1)
         self.biases1    = np.zeros((hidden_layer_size,1))  # means hidden layer has 4 neurons
         self.weights2   = np.random.rand(1, 4) # map 4 nueron middle layer to single neuron output layer
+        print(self.weights2)
         self.biases2    = np.zeros((1,4))
         self.y          = y
         self.output     = np.zeros(y.shape)
@@ -59,6 +62,8 @@ class NeuralNetwork:
     def feedforward(self):
         self.layer1 = np.tanh(np.dot(self.weights1, self.input) + self.biases1) # Same activation functions in both layers
         self.output = self.sigmoid(np.dot(self.weights2, self.layer1) + self.biases2)
+        print('Layer 1. Z: %s, A: %s, Input: %s' % (np.dot(self.weights1, self.input) + self.biases1, np.tanh(np.dot(self.weights1, self.input) + self.biases1), self.input ))
+        print('Layer 2. Z: %s, A: %s, Input: %s' % (np.dot(self.weights2, self.layer1) + self.biases2, self.sigmoid(np.dot(self.weights2, self.layer1) + self.biases2), self.layer1))
 
 
 # However, we still need a way to evaluate the “goodness” of our predictions (i.e. how far off are
@@ -118,20 +123,24 @@ class NeuralNetwork:
     
         dZ1 = np.dot(np.transpose(self.weights2), dy) * (1-np.power(self.layer1, 2)) # tan derivative
         dW1 = (1 / m) * np.dot(dZ1, np.transpose(self.input))
-        print(dZ1)
-        print(dW1)
+        # print(dZ1)
+        # print(dW1)
         db1 = (1 / m) * np.sum(dZ1, axis=1, keepdims=True)
 
+        print("dZ1: %s" % dZ1)
+        print("dW1: %s" % dW1)
+        print("dW2: %s" % dW2)
         # update the weights with the derivative (slope) of the loss function
         self.weights1 -= dW1 * learning_rate
-        self.biases1  -= db1 * learning_rate
+        #self.biases1  -= db1 * learning_rate
         self.weights2 -= dW2 * learning_rate
-        self.biases2  -= db2 * learning_rate
+        #self.biases2  -= db2 * learning_rate
 
 
     def cost(self, predict, actual):
         m = actual.size
         cost__ = -np.sum(np.multiply(np.log(predict), actual) + np.multiply((1 - actual), np.log(1 - predict)))/m
+        print('Cost %f' % cost__)
         return np.squeeze(cost__)
 
     def plot(self, costs):
@@ -145,6 +154,10 @@ class NeuralNetwork:
             self.feedforward()
             self.backprop()
             costs.append(self.cost(self.output, self.y))
+            print('*********************************')
+            print(self.weights1)
+            print(self.weights2)
+            print('*********************************')
 
         self.plot(costs)
 
