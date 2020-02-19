@@ -3,90 +3,63 @@ import numpy as np
 class BackwardPropagator:
 
     def execute(self, parameters, forward_propagation_result, training_output):
-        # network = list(map(lambda x: [], range(parameters.layer_count())))
         dWs = []
         dbs = []
 
-        m =  forward_propagation_result.get_A(0).shape[1]
-        dy = forward_propagation_result.get_last_A() - training_output
+        Y = training_output
+        Y_hat = forward_propagation_result.get_last_A()
 
-        for i in reversed(range(1, parameters.layer_count()+1)):
-            activation_prime = None
-            dW = None
-            db = None
-            errors = list()
-            if i != parameters.layer_count():
-                activation_prime = self.__tanh_prime
-                # layer_weights = parameters.get_weights(i)
-                # layer_plus_one_weights = parameters.get_weights(i+1)
-                # for j in range(4): # range(layer_plus_one_weights.shape[1]):
-                    # error = 0.0
-                    # for neuron in range(1): #range(layer_plus_one_weights.shape[0]):
-                        # error += (layer_plus_one_weights[neuron][j] * network[i][neuron][j])
-                    # errors.append(error)
+        # a hack ensuring the same shape of the prediction vector and labels vector
+        Y = Y.reshape(Y_hat.shape)
 
-                dZi = np.dot(np.transpose(parameters.get_weights(i+1)), dy) * (1-np.power(forward_propagation_result.get_A(i), 2)) # tan derivative
-                dWi = (1 / m) * np.dot(dZi, np.transpose(forward_propagation_result.get_A(i-1)))
-                dbi = (1 / m) * np.sum(dZi, axis=1, keepdims=True)
+        # initiation of gradient descent algorithm
+        dA_prev = - (np.divide(Y, Y_hat) - np.divide(1 - Y, 1 - Y_hat));
 
-            else:
-                activation_prime = self.__sigmoid_prime
-                # layer_output = forward_propagation_result.get_last_A()
-                # for j in range(layer_output.shape[0]):
-                    # errors.append(training_output[j] - layer_output[0][j])
-                dWi = (1 / m) * np.dot(dy, np.transpose(forward_propagation_result.get_A(i-1))) # sigmoid derivative
-                dbi = (1 / m) * np.sum(dy, axis=1, keepdims=True)
+        for layer_idx_curr in reversed(range(1, parameters.layer_count()+1)):
+            # we number network layers from 1
+            layer_idx_prev = layer_idx_curr - 1
 
+            # extraction of the activation function for the current layer
+            activ_function_prime_curr = self.__sigmoid_prime if (layer_idx_curr == parameters.layer_count()+1) else self.__tanh_prime
 
-            # layer_output = forward_propagation_result.get_A(i)
-            # for j in range(parameters.get_weights(i).shape[0]):
-                # network[i-1].insert(j, errors[j] * activation_prime(layer_output[j]))
+            dA_curr = dA_prev
 
-            dWs = [dWi] + dWs
-            dbs = [dbi] + dbs
+            A_prev = forward_propagation_result.get_A(layer_idx_prev)
+            Z_curr = forward_propagation_result.get_Z(layer_idx_curr)
 
-        print("dW1: %s" % dWs[0])
-        print("dW2: %s" % dWs[1])
-        print("db1: %s" % dbs[0])
-        print("db2: %s" % dbs[1])
+            W_curr = parameters.get_weights(layer_idx_curr)
+            b_curr = parameters.get_biases(layer_idx_curr)
+
+            dA_prev, dW_curr, db_curr = self.__single_layer_backward_propagation(
+                dA_curr, W_curr, b_curr, Z_curr, A_prev, activ_function_prime_curr)
+
+            dWs = [dW_curr] + dWs
+            dbs = [db_curr] + dbs
+
         return { "dWs": dWs, "dbs": dbs }
 
-        # return {"dWs": network, "dbs": []}
+    def __single_layer_backward_propagation(self, dA_curr, W_curr, b_curr, Z_curr, A_prev, activation_prime):
+        # number of examples
+        m = A_prev.shape[1]
 
-    def __z(self, input, weights, biases):
-        return np.dot(weights, input) + biases
+        # calculation of the activation function derivative
+        dZ_curr = activation_prime(dA_curr, Z_curr)
 
-    def __activation(self, z):
-        return np.tanh(z)
+        # derivative of the matrix W
+        dW_curr = np.dot(dZ_curr, A_prev.T) / m
+        # derivative of the vector b
+        db_curr = np.sum(dZ_curr, axis=1, keepdims=True) / m
+        # derivative of the matrix A_prev
+        dA_prev = np.dot(W_curr.T, dZ_curr)
 
-    def __sigmoid_prime(self, z):
-        return z * (1 - z)
+        return dA_prev, dW_curr, db_curr
 
-    def __tanh_prime(self, z):
-        return 1.0 - np.tanh(z)**2
+    def sigmoid(self, Z):
+        return 1/(1+np.exp(-Z))
 
+    def __sigmoid_prime(self, dA, Z):
+        sig = self.__sigmoid(Z)
+        return dA * sig * (1 - sig)
 
-        # dw = []  # dC/dW
-        # db = []  # dC/dB
-        # deltas = [None] * (parameters.layer_count()+1)  # delta = dC/dZ  known as error for each layer
-
-        # deltas[len(deltas)-1] = ((training_output-forward_propagation_result.get_last_A())*(self.__activation_prime(forward_propagation_result.get_last_Z())))
-
-        # print(deltas)
-        # for layer_index in reversed(range(1, len(deltas)-1)):
-            # print(layer_index)
-            # A_layer_index = forward_propagation_result.get_A(layer_index)
-            # Z_layer_index = forward_propagation_result.get_Z(layer_index)
-            # W_layer_index = parameters.get_weights(layer_index)
-            # delta_layer_minus_one_index = deltas[layer_index+1]
-            # print(current_layer_output)
-            # print(previous_layer_weights)
-
-
-            # print(deltas)
-            # deltas[layer_index] = W_layer_index.T.dot(delta_layer_plus_one_index)*(self.__activation_prime(Z_layer_index))
-
-        # batch_size = training_output.shape[0]
-        # deltas = deltas[1:len(deltas)-1]
-        # db = [d.dot(np.ones((batch_size,1)))/float(batch_size) for d in deltas]
-        # dw = [d.dot(current_layer_output.T)/float(batch_size) for i,d in enumerate(deltas)]
+    def __tanh_prime(self, dA, Z):
+        return dA * (1.0 - np.tanh(Z)**2)

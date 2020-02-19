@@ -12,3 +12,4 @@
 **/serverWithState/bin/*
 **/serverWithState/vendor/*
 **/.serverless/**
+**/__pycache__/**
