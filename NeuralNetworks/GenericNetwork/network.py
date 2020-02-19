@@ -9,5 +9,9 @@ class Network:
     def fit(self):
         _, self.cost_history = self.trainer.run(self.parameters)
 
-    def predict(self, input):
-        self.forward_propagator(parameters, input)
+    def predict(self, input, threshold):
+        results = self.forward_propagator.execute(self.parameters, input)
+
+        print(results.get_last_A())
+
+        return {"raw": results.get_last_A(), "threshold": list(map(lambda x: 1 if x >= threshold else 0, results.get_last_A()[0])) }
