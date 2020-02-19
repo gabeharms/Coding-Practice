@@ -7,7 +7,7 @@ class BackwardPropagator:
         dWs = []
         dbs = []
 
-        m = 4 # self.input.shape[1]
+        m =  forward_propagation_result.get_A(0).shape[1]
         dy = forward_propagation_result.get_last_A() - training_output
 
         for i in reversed(range(1, parameters.layer_count()+1)):
