@@ -21,5 +21,5 @@ class Trainer:
 
             self.cost_history.append(self.cost_calculator.execute(self.training_output, results.get_last_A()))
 
-        plt.plot(self.cost_history)
-        plt.savefig("./cost_function.png")
+
+        return parameters, self.cost_history
