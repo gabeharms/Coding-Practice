@@ -17,7 +17,6 @@ class ForwardPropagator:
 
             result.set_Z(layer_index, self.__z(result.get_A(layer_index - 1), weights, biases))
             result.set_A(layer_index, activation(result.get_Z(layer_index)))
-            print('Layer %s. Z: %s, A: %s, Input: %s' % (layer_index, self.__z(result.get_A(layer_index - 1), weights, biases), activation(result.get_Z(layer_index)), result.get_A(layer_index - 1)) )
 
         return result
 
