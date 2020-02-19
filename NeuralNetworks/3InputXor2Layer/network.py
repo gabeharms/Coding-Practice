@@ -130,11 +130,13 @@ class NeuralNetwork:
         print("dZ1: %s" % dZ1)
         print("dW1: %s" % dW1)
         print("dW2: %s" % dW2)
+        print("db1: %s" % db1)
+        print("db2: %s" % db2)
         # update the weights with the derivative (slope) of the loss function
         self.weights1 -= dW1 * learning_rate
-        #self.biases1  -= db1 * learning_rate
+        self.biases1  -= db1 * learning_rate
         self.weights2 -= dW2 * learning_rate
-        #self.biases2  -= db2 * learning_rate
+        self.biases2  -= db2 * learning_rate
 
 
     def cost(self, predict, actual):
@@ -168,4 +170,4 @@ y = np.array([0, 1, 1, 0])
 
 model = NeuralNetwork(x, y)
 
-model.fit(1)
+model.fit(100)

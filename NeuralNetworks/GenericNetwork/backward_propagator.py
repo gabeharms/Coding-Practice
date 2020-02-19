@@ -47,7 +47,9 @@ class BackwardPropagator:
 
         print("dW1: %s" % dWs[0])
         print("dW2: %s" % dWs[1])
-        return { "dWs": dWs, "dbs": [] }
+        print("db1: %s" % dbs[0])
+        print("db2: %s" % dbs[1])
+        return { "dWs": dWs, "dbs": dbs }
 
         # return {"dWs": network, "dbs": []}
 

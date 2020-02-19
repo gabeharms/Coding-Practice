@@ -22,7 +22,9 @@ class UpdateParameters:
     #            new_W[neuron][-1] += self.learning_rate * np.sum(dW[i][neuron])/dW[i][neuron].size
 
             new_weights = parameters.get_weights(i+1) - (dW[i] * self.learning_rate)
+            new_biases = parameters.get_biases(i+1) - (db[i] * self.learning_rate)
 
             parameters.set_weights(i+1, new_weights)
+            parameters.set_biases(i+1, new_biases)
 
      
