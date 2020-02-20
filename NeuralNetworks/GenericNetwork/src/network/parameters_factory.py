@@ -26,7 +26,7 @@ class ParametersFactory:
             parameters[layer_string]["activation_prime"] = ParametersFactory.__get_activation_prime(layers[layer_index].activation)
 
         return Parameters(parameters)
-            
+
     def __get_activation(str):
         return ACTIVATION_MAP[str]
 

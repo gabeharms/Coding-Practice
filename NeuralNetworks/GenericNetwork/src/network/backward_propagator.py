@@ -53,13 +53,3 @@ class BackwardPropagator:
         dA_prev = np.dot(W_curr.T, dZ_curr)
 
         return dA_prev, dW_curr, db_curr
-
-    def sigmoid(self, Z):
-        return 1/(1+np.exp(-Z))
-
-    def __sigmoid_prime(self, dA, Z):
-        sig = self.__sigmoid(Z)
-        return dA * sig * (1 - sig)
-
-    def __tanh_prime(self, dA, Z):
-        return dA * (1.0 - np.tanh(Z)**2)
