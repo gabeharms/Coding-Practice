@@ -20,9 +20,9 @@ class PredictionResultsWriter:
 
     def __write_header(self, file):
         header = ""
-        for input_row_index in range(self.prediction_input.shape[0]):
+        for input_row_index in range(self.prediction_input.shape[1]):
             header += "Input %s," % input_row_index
-        header += "Actual Output, Raw Prediction, Binary Prediction"
+        header += "Actual Output, Binary Prediction, Raw Prediction\n"
 
         file.write(header)
 
@@ -31,5 +31,5 @@ class PredictionResultsWriter:
             line = ""
             for input in self.prediction_input[input_row_index]:
                 line += "%s," % input
-            line += "%s,%s,%s\n" % (self.actual_output[input_row_index], self.prediction_output_raw[0][input_row_index], self.prediction_output_binary[input_row_index])
+            line += "%s,%s,%s\n" % (self.actual_output[input_row_index], self.prediction_output_binary[input_row_index], self.prediction_output_raw[0][input_row_index])
             file.write(line)
