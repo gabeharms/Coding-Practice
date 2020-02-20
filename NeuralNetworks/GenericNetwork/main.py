@@ -22,7 +22,7 @@ def main():
 
     prediction_results = network.predict(configuration.predict_input, configuration.predict_threshold)
 
-    prediction_results_writer = PredictionResultsWriter(problem_directory, configuration.predict_input, prediction_results.raw, prediction_results.binary)
+    prediction_results_writer = PredictionResultsWriter(problem_directory, configuration.predict_input, configuration.predict_output, prediction_results.raw, prediction_results.binary)
 
     prediction_results_writer.write()
 
