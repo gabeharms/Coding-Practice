@@ -1,4 +1,4 @@
-from predict_results import PredictResults
+from network.predict_results import PredictResults
 
 class PredictResultsFactory:
     def build(forward_propogation_results, threshold):

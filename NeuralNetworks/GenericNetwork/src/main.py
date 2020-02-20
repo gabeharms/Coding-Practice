@@ -1,9 +1,9 @@
 import sys
 import json
-from network_factory import NetworkFactory
-from configuration_parser import ConfigurationParser
-from graph import Graph
-from prediction_results_writer import PredictionResultsWriter
+from network.network_factory import NetworkFactory
+from configuration.configuration_parser import ConfigurationParser
+from output.graph import Graph
+from output.prediction_results_writer import PredictionResultsWriter
 
 def main():
     problem_directory = "problems/%s" % sys.argv[1]

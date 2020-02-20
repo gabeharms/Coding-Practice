@@ -1,6 +1,6 @@
 import numpy as np
-from parameters import Parameters
-from activation_functions import ActivationFunctions
+from network.parameters import Parameters
+from network.activation_functions import ActivationFunctions
 
 ACTIVATION_MAP = {
         "tanh": ActivationFunctions.tanh,

@@ -1,5 +1,5 @@
 import numpy as np
-from forward_propagation_result import ForwardPropagationResult
+from network.forward_propagation_result import ForwardPropagationResult
 
 class ForwardPropagator:
 

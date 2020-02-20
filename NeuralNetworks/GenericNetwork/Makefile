@@ -1,2 +1,2 @@
 default:
-		python3 main.py $(FILE)
+		python3 src/main.py $(FILE)

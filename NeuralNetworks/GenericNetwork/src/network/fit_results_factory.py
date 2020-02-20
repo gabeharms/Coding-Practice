@@ -1,4 +1,4 @@
-from fit_results import FitResults
+from network.fit_results import FitResults
 
 class FitResultsFactory:
     def build(network, cost_history):

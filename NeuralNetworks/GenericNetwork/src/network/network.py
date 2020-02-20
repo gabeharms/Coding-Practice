@@ -1,5 +1,5 @@
-from fit_results_factory import FitResultsFactory
-from predict_results_factory import PredictResultsFactory
+from network.fit_results_factory import FitResultsFactory
+from network.predict_results_factory import PredictResultsFactory
 
 class Network:
     def __init__(self, forward_propagator, parameters, trainer):

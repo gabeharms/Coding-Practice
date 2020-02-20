@@ -1,7 +1,7 @@
-from parameters_factory import ParametersFactory
-from forward_propagator import ForwardPropagator
-from trainer_factory import TrainerFactory
-from network import Network
+from network.parameters_factory import ParametersFactory
+from network.forward_propagator import ForwardPropagator
+from network.trainer_factory import TrainerFactory
+from network.network import Network
 
 class NetworkFactory:
     def build(configuration):

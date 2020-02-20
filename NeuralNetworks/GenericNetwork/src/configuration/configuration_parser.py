@@ -1,6 +1,5 @@
-from configuration import Configuration
+from configuration.configuration import Configuration
 import numpy as np
-
 
 class Layer:
     def __init__(self, neurons, activation):
