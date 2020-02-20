@@ -1,0 +1,25 @@
+{
+  "layers": [
+    {"neurons": 3, "activation": "tanh"},
+    {"neurons": 3, "activation": "tanh"},
+    {"neurons": 1, "activation": "sigmoid"}
+
+  ],
+  "iterations": 100,
+  "learning_rate": "1.2",
+  "input":  {
+    "0": [0, 0, 1],
+    "1": [0, 1, 0],
+    "2": [0, 1, 0],
+    "3": [0, 1, 1]
+  },
+  "output": [0, 1, 1, 0],
+  "predict_input": {
+    "0": [0, 0, 1],
+    "1": [0, 1, 0],
+    "2": [0, 1, 0],
+    "3": [0, 1, 1]
+  },
+  "predict_output": [0, 1, 1, 0],
+  "predict_threshold": "0.70"
+}
