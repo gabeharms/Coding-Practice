@@ -1,4 +1,3 @@
-    
 
 class Configuration:
     def __init__(self, input, output, layers, iterations, learning_rate, predict_input, predict_output, predict_threshold):

@@ -12,15 +12,15 @@ def main():
 
   network = NetworkFactory.build(configuration)
 
-  network.fit()
+  fit_results = network.fit()
 
-  grapher = Graph("problems/%s/" % (sys.argv[1]), network.cost_history, network.parameters)
+  grapher = Graph("problems/%s/" % (sys.argv[1]), fit_results.cost_history, fit_results.parameters)
 
   grapher.plot()
 
   prediction_results = network.predict(configuration.predict_input, configuration.predict_threshold)
 
-  prediction_results_writer = PredictionResultsWriter("problems/%s/" % (sys.argv[1]), configuration.predict_input, prediction_results)
+  prediction_results_writer = PredictionResultsWriter("problems/%s/" % (sys.argv[1]), configuration.predict_input, prediction_results.raw, prediction_results.binary)
 
   prediction_results_writer.write()
 

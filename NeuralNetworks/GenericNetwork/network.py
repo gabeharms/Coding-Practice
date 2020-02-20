@@ -1,3 +1,5 @@
+from fit_results_factory import FitResultsFactory
+from predict_results_factory import PredictResultsFactory
 
 class Network:
     def __init__(self, forward_propagator, parameters, trainer):
@@ -7,11 +9,10 @@ class Network:
         self.cost_history = []
 
     def fit(self):
-        _, self.cost_history = self.trainer.run(self.parameters)
+        self.trainer.run(self.parameters)
+        return FitResultsFactory.build(self)
 
     def predict(self, input, threshold):
-        results = self.forward_propagator.execute(self.parameters, input)
+        forward_propogation_results = self.forward_propagator.execute(self.parameters, input)
+        return PredictResultsFactory.build(forward_propogation_results, threshold)
 
-        print(results.get_last_A())
-
-        return {"raw": results.get_last_A(), "threshold": list(map(lambda x: 1 if x >= threshold else 0, results.get_last_A()[0])) }

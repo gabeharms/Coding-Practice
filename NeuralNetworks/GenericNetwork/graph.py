@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import os
 
-
 class Graph:
     def __init__(self, directory, cost_history, parameters):
         self.directory = "%splots" % directory
