@@ -6,6 +6,12 @@ class Parameters:
         self.__init_parameter_history()
 
 
+    def get_activation(self, layer_index):
+        return self.parameters["layer%s" % layer_index]["activation"]
+
+    def get_activation_prime(self, layer_index):
+        return self.parameters["layer%s" % layer_index]["activation_prime"]
+
     def get_weights(self, layer_index):
         return self.parameters["layer%s" % layer_index]["W"]
 

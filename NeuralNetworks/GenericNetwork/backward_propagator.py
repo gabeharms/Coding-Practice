@@ -20,7 +20,7 @@ class BackwardPropagator:
             layer_idx_prev = layer_idx_curr - 1
 
             # extraction of the activation function for the current layer
-            activ_function_prime_curr = self.__sigmoid_prime if (layer_idx_curr == parameters.layer_count()+1) else self.__tanh_prime
+            activ_function_prime_curr = parameters.get_activation_prime(layer_idx_curr) # self.__sigmoid_prime if (layer_idx_curr == parameters.layer_count()+1) else self.__tanh_prime
 
             dA_curr = dA_prev
 

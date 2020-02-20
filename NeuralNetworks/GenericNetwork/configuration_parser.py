@@ -3,12 +3,9 @@ import numpy as np
 
 
 class Layer:
-    def __init__(self, neurons):
+    def __init__(self, neurons, activation):
        self.neurons = neurons
-
-    def neurons():
-        self.neurons
-
+       self.activation = activation
 
 class ConfigurationParser:
     def parse(json):
@@ -17,7 +14,7 @@ class ConfigurationParser:
         return Configuration(
                 training_input,
                 np.array(json["output"]),
-                [Layer(training_input.shape[0])] + list(map(lambda layer: Layer(layer["neurons"]), json["layers"])),
+                [Layer(training_input.shape[0], "tanh")] + list(map(lambda layer: Layer(layer["neurons"], layer["activation"]), json["layers"])),
                 int(json["iterations"]),
                 float(json["learning_rate"]),
                 predict_input,
