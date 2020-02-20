@@ -6,11 +6,10 @@ class Network:
         self.forward_propagator = forward_propagator
         self.parameters = parameters
         self.trainer = trainer
-        self.cost_history = []
 
     def fit(self):
-        self.trainer.run(self.parameters)
-        return FitResultsFactory.build(self)
+        cost_history = self.trainer.run(self.parameters)
+        return FitResultsFactory.build(self, cost_history)
 
     def predict(self, input, threshold):
         forward_propogation_results = self.forward_propagator.execute(self.parameters, input)

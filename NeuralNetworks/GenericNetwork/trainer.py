@@ -22,4 +22,4 @@ class Trainer:
             self.cost_history.append(self.cost_calculator.execute(self.training_output, results.get_last_A()))
 
 
-        return parameters, self.cost_history
+        return self.cost_history
