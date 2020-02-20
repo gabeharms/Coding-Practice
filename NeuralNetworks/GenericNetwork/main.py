@@ -6,22 +6,24 @@ from graph import Graph
 from prediction_results_writer import PredictionResultsWriter
 
 def main():
-  file = json.load(open("problems/%s/config.json" %(sys.argv[1]), 'r'))
+    problem_directory = "problems/%s" % sys.argv[1]
 
-  configuration = ConfigurationParser.parse(file)
+    file = json.load(open("%s/config.json" % problem_directory, 'r'))
 
-  network = NetworkFactory.build(configuration)
+    configuration = ConfigurationParser.parse(file)
 
-  fit_results = network.fit()
+    network = NetworkFactory.build(configuration)
 
-  grapher = Graph("problems/%s/" % (sys.argv[1]), fit_results.cost_history, fit_results.parameters)
+    fit_results = network.fit()
 
-  grapher.plot()
+    grapher = Graph(problem_directory, fit_results.cost_history, fit_results.parameters)
 
-  prediction_results = network.predict(configuration.predict_input, configuration.predict_threshold)
+    grapher.plot()
 
-  prediction_results_writer = PredictionResultsWriter("problems/%s/" % (sys.argv[1]), configuration.predict_input, prediction_results.raw, prediction_results.binary)
+    prediction_results = network.predict(configuration.predict_input, configuration.predict_threshold)
 
-  prediction_results_writer.write()
+    prediction_results_writer = PredictionResultsWriter(problem_directory, configuration.predict_input, prediction_results.raw, prediction_results.binary)
+
+    prediction_results_writer.write()
 
 main()
