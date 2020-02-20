@@ -1,4 +1,5 @@
 import os
+from shutil import rmtree
 
 class PredictionResultsWriter:
     def __init__(self, directory, prediction_input, prediction_output_raw, prediction_output_binary):
@@ -8,6 +9,7 @@ class PredictionResultsWriter:
         self.prediction_output_binary = prediction_output_binary
 
     def write(self):
+        rmtree(self.directory)
         os.makedirs(self.directory, exist_ok=True)
         with open("%sresults.csv" % self.directory,'w') as file:
             for input_row_index in range(self.prediction_input.shape[0]):

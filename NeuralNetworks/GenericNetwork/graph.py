@@ -1,13 +1,15 @@
 import matplotlib.pyplot as plt
+from shutil import rmtree
 import os
 
 class Graph:
     def __init__(self, directory, cost_history, parameters):
-        self.directory = "%splots" % directory
+        self.directory = "%s/plots" % directory
         self.cost_history = cost_history
         self.parameters = parameters
 
     def plot(self):
+        rmtree(self.directory)
         os.makedirs(self.directory, exist_ok=True)
         self.__plot_cost(self.cost_history)
 
