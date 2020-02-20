@@ -19,6 +19,7 @@ class Graph:
     def __plot_cost(self, cost_history):
         plt.plot(cost_history)
         plt.savefig("%s/cost.png" % self.directory)
+        plt.clf()
 
     def __plot_layer_parameters(self, layer_num, weight_history):
         os.makedirs("%s/layer%d" % (self.directory, layer_num) , exist_ok=True)
