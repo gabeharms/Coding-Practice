@@ -1,6 +1,6 @@
 FROM openjdk:11-jdk
 
-WORKDIR /pure-actions-service
+WORKDIR /rest-server
 
 ARG MAVEN_VERSION=3.6.3
 ARG USER_HOME_DIR="/root"
