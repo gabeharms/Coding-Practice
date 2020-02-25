@@ -17,4 +17,10 @@ public class CityService implements ICityService {
 
     return cities;
   }
+
+  public City findOne(Long id) {
+    City city = repository.findById(id).get();
+
+    return city;
+  }
 }

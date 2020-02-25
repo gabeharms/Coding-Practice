@@ -5,4 +5,5 @@ import java.util.List;
 
 public interface ICityService {
   List<City> findAll();
+  City findOne(Long id);
 }
