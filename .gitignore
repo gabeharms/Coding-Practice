@@ -13,3 +13,4 @@
 **/serverWithState/vendor/*
 **/.serverless/**
 **/__pycache__/**
+**/.mvn/**
