@@ -1,0 +1,11 @@
+#! /bin/bash
+
+DESCRIPTION=$1
+VERSION=`date -u "+%Y%m%d%H%M%S"`
+FILE_NAME="./migrations/sql/V${VERSION}__${DESCRIPTION}.sql"
+UNDO_FILE_NAME="./migrations/sql/U${VERSION}__${DESCRIPTION}.sql"
+
+touch $FILE_NAME
+touch $UNDO_FILE_NAME
+echo $FILE_NAME
+echo $UNDO_FILE_NAME
