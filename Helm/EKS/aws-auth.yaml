@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aws-auth
+  namespace: kube-system
+data:
+  mapRoles: |
+    - groups:
+      - system:bootstrappers
+      - system:nodes
+      rolearn: arn:aws:iam::066533940815:role/eksctl-this-is-my-cluster-nodegro-NodeInstanceRole-369E5AUTBOYA
+      username: system:node:{{EC2PrivateDNSName}}
+    - groups:
+      - system:bootstrappers
+      - system:nodes
+      rolearn: arn:aws:iam::066533940815:role/eksctl-this-is-my-cluster-nodegro-NodeInstanceRole-XDV42VSN56Z7
+      username: system:node:{{EC2PrivateDNSName}}
+  mapUsers: |
+    - userarn: arn:aws:iam::066533940815:user/gabe
+      username: gabe
+      groups:
+        - system:masters
