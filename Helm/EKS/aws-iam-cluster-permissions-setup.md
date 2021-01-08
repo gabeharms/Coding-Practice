@@ -46,3 +46,11 @@ modify the userarn and username sections to match your IAM user.
 
 Lastly apply those aws-auth configmap changes to your cluster:
 > kubectl apply -f aws-auth.yaml
+
+NOTE: I have noticed that the EKS cluster does not like when you apply this aws-auth.yaml config map
+directly. The nodes become unavailable and I have to tear down the whole cluster.
+
+Instead i'd recommend using:
+> k edit -n kube-system configmap/aws-auth
+
+And making sure that mapUsers section listed above is properly added.

@@ -8,6 +8,7 @@ The following doc outlines how to leverage helm with AWS EKS service.
 - helm CLI installed
 - eksctl CLI installed
 - kubectl CLI installed
+- In the hello-world-server/values.yaml, ensure that ingress: enabled is set to false
 
 
 ### Setup
@@ -138,5 +139,66 @@ and configure them to route into your cluster.
 
 The mappings are as follows:
 - Ingress -> AWS Application Load Balancer (ALB)
-- Service -> AWS Elastic Load Balancers (ELB)
+- Service -> AWS Network Load Balancer (NLB)
 
+The following guide shows you how to:
+- create a policy and service account (provides the controller with the proper permissions to create ALB/NLB objects)
+- install the controller to your cluster
+
+https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/deploy/installation/
+
+#### Detailed run through of above tutorial
+
+Setup OIDC Provider:
+> eksctl utils associate-iam-oidc-provider --region us-west-2 --cluster this-is-my-cluster --approve
+
+Download IAM policy for the AWS Load Balancer Controller:
+> curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.1.0/docs/install/iam_policy.json
+
+Create a new IAM policy:
+> aws iam create-policy --policy-name AWSLoadBalancerControllerIAMPolicy --policy-document file://iam-policy.json
+
+and you should get back something like the following:
+``
+{
+    "Policy": {
+        "PolicyName": "AWSLoadBalancerControllerIAMPolicy",
+        "PolicyId": "ANPAQ67N3LZHRBNATWSOA",
+        "Arn": "<arn-was-here> ",
+        "Path": "/",
+        "DefaultVersionId": "v1",
+        "AttachmentCount": 0,
+        "PermissionsBoundaryUsageCount": 0,
+        "IsAttachable": true,
+        "CreateDate": "2021-01-06T14:56:51+00:00",
+        "UpdateDate": "2021-01-06T14:56:51+00:00"
+    }
+}``
+
+Now create a IAM role and ServiceAccount for the AWS Load Balancer Controller, using the ARN from
+above:
+> eksctl create iamserviceaccount --cluster=this-is-my-cluster --namespace=kube-system --name=aws-load-balancer-controller --attach-policy-arn=arn:aws:iam::<AWS_ACCOUNT_ID>:policy/AWSLoadBalancerControllerIAMPolicy --approve
+
+NOTE: When installing helm later, the aws-load-balancer-controller deployment fails to create pods
+because the pod cannot find the service account becasue its looking in the default namesapce. Since
+I don't know how to make the pod look in the correct namespace, i simply removed the --namespace
+flag from the above command and the service account is then in the default namespace and can be 
+looked up.
+
+
+Add the EKS chart repo to helm:
+> helm repo add eks https://aws.github.io/eks-charts
+
+Apply the TargetGroupBinding CRDs to your cluster:
+> kubectl apply -k "github.com/aws/eks-charts/stable/aws-load-balancer-controller//crds?ref=master"
+
+This CRD allows your controller that will be installed next, to update custom resources in the 
+cluster.
+
+Now install the aws load balancer controller to your cluster:
+> helm upgrade -i aws-load-balancer-controller eks/aws-load-balancer-controller --set clusterName=this-is-my-cluster --set serviceAccount.create=false --set serviceAccount.name=aws-load-balancer-controller
+
+
+### NEXT: Learn how to configure external DNS w/ EKS
+
+https://www.freecodecamp.org/news/how-to-setup-dns-for-a-website-using-kubernetes-eks-and-nginx/
