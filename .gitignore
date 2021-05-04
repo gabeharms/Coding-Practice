@@ -1,6 +1,7 @@
 **/node_modules
 **/node_modules/*
 **/target
+**/target/*
 **/elm-stuff
 **/elm-stuff/*
 **/HelloApp/lib/*
