@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.procore.playground;
+package com.procore.playground.topspeedwindow;
 
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.functions.RichMapFunction;

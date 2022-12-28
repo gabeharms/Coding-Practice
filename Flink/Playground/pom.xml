@@ -112,7 +112,7 @@ under the License.
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>com.procore.playground.Main</mainClass>
+                            <mainClass>com.procore.playground.topspeedwindow.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
