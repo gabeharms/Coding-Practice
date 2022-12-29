@@ -110,19 +110,67 @@ under the License.
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
-                    <archive>
-                        <manifest>
-                            <mainClass>com.procore.playground.topspeedwindow.Main</mainClass>
-                        </manifest>
-                    </archive>
                 </configuration>
                 <executions>
                     <execution>
-                        <id>make-assembly</id>
+                        <id>top-speed-windowing</id>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
+                        <configuration>
+                            <finalName>top-speed-windowing</finalName>
+                            <archive>
+                                <manifest>
+                                    <mainClass>com.procore.playground.topspeedwindow.Main</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>grade-salary-joining</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>grade-salary-joining</finalName>
+                            <archive>
+                                <manifest>
+                                    <mainClass>com.procore.playground.gradesalarayjoin.Main</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>state-machine</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>state-machine</finalName>
+                            <archive>
+                                <manifest>
+                                    <mainClass>com.procore.playground.statemachine.Main</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>state-machine-kafka-events</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>state-machine-kafka-events</finalName>
+                            <archive>
+                                <manifest>
+                                    <mainClass>com.procore.playground.statemachine.KafkaEventGenerator</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
