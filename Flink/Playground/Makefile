@@ -12,4 +12,4 @@ grade_salary_joining:
 
 state_machine:
 	~/Downloads/flink-1.16.0/bin/flink run target/state-machine-kafka-events-jar-with-dependencies.jar --kafka-topic alerts \
-	& ~/Downloads/flink-1.16.0/bin/flink run target/state-machine-jar-with-dependencies.jar --backend hashmap --error-rate 0.5 --kafka-topic alerts
+	& ~/Downloads/flink-1.16.0/bin/flink run target/state-machine-jar-with-dependencies.jar --backend rocks --error-rate 0.5 --kafka-topic alerts

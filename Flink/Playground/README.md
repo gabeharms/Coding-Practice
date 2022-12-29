@@ -78,8 +78,9 @@ an event go in alphabetical order. Depending on the error probability provided, 
 for an event. This is an invalid state transition.
 https://github.com/apache/flink/tree/259c7a4776af4d9d7f174f871fb2d4145787f794/flink-examples/flink-examples-streaming/src/main/java/org/apache/flink/streaming/examples/statemachine/event
 
+These events are put into the kafka topic. 
 
-These events are put into the kafka topic. Then the second job that's running is consuming events from this topic
+The second job that's running is consuming events from this topic
 and determining if any invalid state transitions have occurred.
 
 It does this by taking the source data stream, grouping by the event's IP address, and then calling a map function over
@@ -94,6 +95,10 @@ This mapper takes each event, within an IP address, and:
 
 Keep in mind that an instance of the StateMachineMapper is created for **_each_** IP address because of how
 we grouped the data stream.
+
+What's also interesting in this example is that we configure the job to use rocksdb as the persistence store. Thus, all state
+is put into rocksdb and recalled from it within the `StateMachineMapper`. More info here:
+https://nightlies.apache.org/flink/flink-docs-master/docs/ops/state/state_backends/#the-embeddedrocksdbstatebackend
 
 Finally, an output DataStream "alerts" is created which contains: IP address, current state, invalid next state
 

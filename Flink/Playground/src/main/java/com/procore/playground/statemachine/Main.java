@@ -76,7 +76,7 @@ public class Main {
             final String checkpointDir = params.get("checkpoint-dir");
             boolean incrementalCheckpoints = params.getBoolean("incremental-checkpoints", false);
             env.setStateBackend(new EmbeddedRocksDBStateBackend(incrementalCheckpoints));
-            env.getCheckpointConfig().setCheckpointStorage(checkpointDir);
+//            env.getCheckpointConfig().setCheckpointStorage(checkpointDir);
         }
 
         if (params.has("kafka-topic")) {
