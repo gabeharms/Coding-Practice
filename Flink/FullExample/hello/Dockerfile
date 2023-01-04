@@ -22,9 +22,8 @@ WORKDIR /app
 COPY requirements.txt /app
 RUN pip install -r requirements.txt
 
-COPY functions.py /app
+COPY hello.py /app
 
 EXPOSE 8000
 
-CMD ["python3", "/app/functions.py"]
-
+CMD ["python3", "/app/hello.py"]

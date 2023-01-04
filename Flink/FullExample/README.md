@@ -2,7 +2,7 @@
 
 ## Background
 
-This example demonstrates deploying `Apache Flink StateFun`, together with a single [remote function](03-functions/functions.py) to `kubernetes`.
+This example demonstrates deploying `Apache Flink StateFun`, together with a single [remote function](hello/functions.py) to `kubernetes`.
 
 All the components are already pre-configured and contains all the resource definitions ready to be applied with `kubectl`.
 All the resources are deployed to a dedicated namespace - `statefun`.
@@ -13,7 +13,7 @@ The following components will be installed:
 
 1. Apache Kafka
 2. MinIO (S3 compatible object store)
-3. A StateFun service [functions.py](03-functions/functions.py)
+3. A StateFun service [hello.py](hello/hello.py)
 4. Apache Flink Cluster that executes a StateFun Job.  Take a look at [module.yaml](04-statefun/00-module.yaml) config-map. 
 	The resources defined at [statefun-runtime.yaml](04-statefun/ 01-statefun-runtime.yaml) are already pre-configured for that specific example.
 

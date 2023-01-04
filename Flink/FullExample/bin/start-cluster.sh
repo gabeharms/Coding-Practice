@@ -6,7 +6,7 @@ minikube ssh 'sudo ip link set docker0 promisc on'
 eval $(minikube -p minikube docker-env)
 
 
-(cd 03-functions; make image)
+(cd hello; make image)
 
 helm install statefun --namespace statefun --create-namespace ./.charts/full-example
 
@@ -18,3 +18,5 @@ kubectl wait -n statefun --all --for=condition=Ready --timeout=600s pod
 
 # Port forward for Flink UI
 kubectl port-forward svc/statefun-master-rest 8081:8081 -n statefun &
+
+say -v "Tessa" "Cluster is ready"

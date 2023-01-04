@@ -1,3 +1,3 @@
 #!/bin/bash
 
-kubectl logs -f -l component=functions -n statefun
+kubectl logs -f -l component=hello -n statefun

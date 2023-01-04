@@ -8,7 +8,7 @@ data:
     kind: io.statefun.endpoints.v2/http
     spec:
       functions: example/*
-      urlPathTemplate: http://functions.statefun.svc.cluster.local:8000/statefun
+      urlPathTemplate: http://hello.statefun.svc.cluster.local:8000/statefun
     ---
     kind: io.statefun.kafka.v1/ingress
     spec:
