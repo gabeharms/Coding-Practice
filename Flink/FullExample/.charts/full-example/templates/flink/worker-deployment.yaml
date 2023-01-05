@@ -3,19 +3,37 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: statefun-worker
-  namespace: statefun
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: statefun
+      app: worker
       component: worker
   template:
     metadata:
       labels:
-        app: statefun
+        app: worker
         component: worker
     spec:
+      initContainers:
+        - name: wait-for-kafka
+          image: confluentinc/cp-kafkacat:7.1.5
+          command:
+            - /bin/sh
+            - -c
+            - --
+          args:
+            - until kafkacat -b kafka-broker.{{.Release.Namespace}}.svc.cluster.local:9092 -L; do echo "Failed to connect to kafka"; done; echo "Successfully connected to kafka"
+          imagePullPolicy: IfNotPresent
+        - name: wait-for-flink
+          image: flink:1.16.0
+          command:
+            - /bin/sh
+            - -c
+            - --
+          args:
+            - until flink list --jobmanager statefun-master-rest.{{.Release.Namespace}}.svc.cluster.local:8081; do echo "Failed to connect to flink master"; done; echo "Successfully connected to flink master"
+          imagePullPolicy: IfNotPresent
       containers:
         - name: worker
           image: apache/flink-statefun:3.2.0

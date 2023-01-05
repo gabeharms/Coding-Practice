@@ -5,7 +5,6 @@ metadata:
   labels:
     app: zookeeper
   name: zookeeper
-  namespace: statefun
 spec:
   replicas: 1
   selector:

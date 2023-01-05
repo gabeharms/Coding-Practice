@@ -1,29 +1,30 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: minio
+  name: hello
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ .Values.name }}
-      component: minio
+      app: hello
+      component: hello
   template:
     metadata:
       labels:
-        app: {{ .Values.name }}
-        component: minio
+        app: hello
+        component: hello
     spec:
       containers:
-        - name: minio
-          image: minio/minio
-          command: ["minio"]
-          args: ["server", "/data"]
+        - name: hello
+          image: hello
+          imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 9000
+            - containerPort: 8000
               name: endpoint
           livenessProbe:
             tcpSocket:
-              port: 9000
+              port: 8000
             initialDelaySeconds: 30
             periodSeconds: 60
+
